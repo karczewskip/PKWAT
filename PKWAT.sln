@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.Domain", "PKWAT.ScoringPoker.Domain\PKWAT.ScoringPoker.Domain.csproj", "{02FB6514-2781-4974-85F8-95F52B712671}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Domain", "PKWAT.ScoringPoker.Domain\PKWAT.ScoringPoker.Domain.csproj", "{02FB6514-2781-4974-85F8-95F52B712671}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.Web", "PKWAT.ScoringPoker.Web\PKWAT.ScoringPoker.Web\PKWAT.ScoringPoker.Web.csproj", "{00257C8B-5E76-4570-8C9E-A5089AD074A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.Web.Client", "PKWAT.ScoringPoker.Web\PKWAT.ScoringPoker.Web.Client\PKWAT.ScoringPoker.Web.Client.csproj", "{A5452840-9A54-4117-9CD1-8136D436F0B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{02FB6514-2781-4974-85F8-95F52B712671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02FB6514-2781-4974-85F8-95F52B712671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02FB6514-2781-4974-85F8-95F52B712671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00257C8B-5E76-4570-8C9E-A5089AD074A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00257C8B-5E76-4570-8C9E-A5089AD074A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00257C8B-5E76-4570-8C9E-A5089AD074A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00257C8B-5E76-4570-8C9E-A5089AD074A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5452840-9A54-4117-9CD1-8136D436F0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5452840-9A54-4117-9CD1-8136D436F0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5452840-9A54-4117-9CD1-8136D436F0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5452840-9A54-4117-9CD1-8136D436F0B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
