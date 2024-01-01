@@ -1,0 +1,6 @@
+@PKWAT.ScoringPoker.Server_HostAddress = http://localhost:5206
+
+GET {{PKWAT.ScoringPoker.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
