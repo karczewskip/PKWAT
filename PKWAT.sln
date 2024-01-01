@@ -13,9 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Server",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Contracts", "PKWAT.ScoringPoker.Contracts\PKWAT.ScoringPoker.Contracts.csproj", "{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.UI.Web.Client", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.Client\PKWAT.ScoringPoker.UI.Web.Client.csproj", "{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web.Client", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.Client\PKWAT.ScoringPoker.UI.Web.Client.csproj", "{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

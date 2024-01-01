@@ -1,6 +1,6 @@
 ﻿@using PKWAT.ScoringPoker.UI.Web.Components.Layout
 
-<Router AppAssembly="@typeof(Program).Assembly">
+<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="new []{typeof(PKWAT.ScoringPoker.UI.Web.Client.Pages.Counter).Assembly}">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>

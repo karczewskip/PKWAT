@@ -26,7 +26,7 @@
         public async Task<RegisterResponse> Register(RegisterRequest registerModel)
         {
             var result = await _httpClient.PostAsJsonAsync("api/accounts", registerModel);
-            if (!result.IsSuccessStatusCode)
+            if (result.IsSuccessStatusCode)
                 return new RegisterResponse { Success = true, Errors = null };
             return new RegisterResponse { Success = false, Errors = new List<string> { "Error occured" } };
         }

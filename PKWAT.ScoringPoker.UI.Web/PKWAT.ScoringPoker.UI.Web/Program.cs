@@ -1,11 +1,9 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using PKWAT.ScoringPoker.UI.Web.Client.Pages;
-using PKWAT.ScoringPoker.UI.Web.Components;
 using PKWAT.ScoringPoker.UI.Web.Security;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+using PKWAT.ScoringPoker.UI.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 

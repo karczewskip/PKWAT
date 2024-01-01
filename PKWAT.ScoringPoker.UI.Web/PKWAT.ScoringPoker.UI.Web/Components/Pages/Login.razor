@@ -1,5 +1,7 @@
 ﻿@page "/login"
 
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
 @inject IAuthService AuthService
 @inject NavigationManager NavigationManager
 
@@ -15,7 +17,7 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Please enter your details</h5>
-        <EditForm Model="LoginRequest" OnValidSubmit="HandleLogin">
+        <EditForm Model="LoginRequest" OnValidSubmit="HandleLogin" FormName="login">
             <DataAnnotationsValidator />
             <ValidationSummary />
 
@@ -35,8 +37,9 @@
 </div>
 
 @code {
+    [SupplyParameterFromForm]
+    private LoginRequest LoginRequest { get; set; } = new();
 
-    private LoginRequest LoginRequest = new LoginRequest();
     private bool ShowErrors;
     private string Error = "";
 
