@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Web.Clie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Server", "PKWAT.ScoringPoker.Server\PKWAT.ScoringPoker.Server.csproj", "{99C83F8E-1D90-47E5-9891-558397F800FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.Contracts", "PKWAT.ScoringPoker.Contracts\PKWAT.ScoringPoker.Contracts.csproj", "{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Contracts", "PKWAT.ScoringPoker.Contracts\PKWAT.ScoringPoker.Contracts.csproj", "{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PKWAT.ScoringPoker.UI.Web.Client", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.Client\PKWAT.ScoringPoker.UI.Web.Client.csproj", "{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0CA15C1-C185-4AF2-9D4A-896CEB28575E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
