@@ -1,0 +1,52 @@
+﻿@page "/scoringTask"
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.SignalR.Client
+@* @using Microsoft.AspNetCore.Authorization
+@attribute [Authorize] *@
+
+@inject ILocalStorageService LocalStorageService
+
+@implements IAsyncDisposable
+
+<PageTitle>ScoringTask</PageTitle>
+
+<h1>Test Scoring task</h1>
+
+Messages from the server:
+
+<ul>
+    @foreach (var message in messages)
+    {
+        <li>@message</li>
+    }
+</ul>
+
+@code {
+    private HubConnection? hubConnection;
+    private readonly List<string> messages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:7173/scoringTask",
+            o => o.AccessTokenProvider = () => LocalStorageService.GetItemAsync<string?>("authToken").AsTask())
+            .Build();
+
+        hubConnection.On<string>("ReceiveNotification", message =>
+        {
+            messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if(hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+}

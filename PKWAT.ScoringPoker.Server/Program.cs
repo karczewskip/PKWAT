@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using PKWAT.ScoringPoker.Server.Data;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using PKWAT.ScoringPoker.Server.Hubs;
+using PKWAT.ScoringPoker.Server.BackgroundServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSignalR();
+
+builder.Services.AddHostedService<TaskChangesNotifier>();
+
+builder.Services.AddCors();
+
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -42,11 +51,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ScoringTaskHub>("scoringTask");
 
 app.Run();
