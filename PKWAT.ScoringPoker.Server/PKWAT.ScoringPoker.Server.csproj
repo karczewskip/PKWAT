@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PKWAT.ScoringPoker.Contracts\PKWAT.ScoringPoker.Contracts.csproj" />
+    <ProjectReference Include="..\PKWAT.ScoringPoker.Domain\PKWAT.ScoringPoker.Domain.csproj" />
   </ItemGroup>
 
 </Project>

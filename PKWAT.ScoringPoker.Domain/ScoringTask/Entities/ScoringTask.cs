@@ -24,83 +24,83 @@
 
         public ScoringTaskName Name { get; protected set; }
 
-        public EstimationMethodKey EstimationMethodKey { get; protected set; }
+        //public EstimationMethodKey EstimationMethodKey { get; protected set; }
 
-        public DateTime? EstimationStarted { get; protected set; }
+        //public DateTime? EstimationStarted { get; protected set; }
 
-        public DateTime? ScheduledEstimationFinish { get; protected set; }
+        //public DateTime? ScheduledEstimationFinish { get; protected set; }
 
-        public Estimation? FinalEstimation { get; protected set; }
+        //public Estimation? FinalEstimation { get; protected set; }
 
-        public ICollection<UserEstimation> TaskEstimations { get; protected set; }
+        //public ICollection<UserEstimation> TaskEstimations { get; protected set; }
 
-        public ScoringTaskStatus GetStatus(DateTime time)
-        {
-            if(EstimationStarted == null)
-            {
-                return ScoringTaskStatus.Created;
-            }
+        //public ScoringTaskStatus GetStatus(DateTime time)
+        //{
+        //    if(EstimationStarted == null)
+        //    {
+        //        return ScoringTaskStatus.Created;
+        //    }
 
-            if(FinalEstimation != null)
-            {
-                return ScoringTaskStatus.Approved;
-            }
+        //    if(FinalEstimation != null)
+        //    {
+        //        return ScoringTaskStatus.Approved;
+        //    }
 
-            if(ScheduledEstimationFinish < time)
-            {
-                return ScoringTaskStatus.EstimationFinished;
-            }
+        //    if(ScheduledEstimationFinish < time)
+        //    {
+        //        return ScoringTaskStatus.EstimationFinished;
+        //    }
 
-            return ScoringTaskStatus.EstimationStarted;
-        }
+        //    return ScoringTaskStatus.EstimationStarted;
+        //}
 
-        public static ScoringTask CreateNew(ScoringTaskName name, EstimationMethodKey estimationMethodKey)
-        {
-            return new ScoringTask()
-            {
-                Name = name,
-                EstimationMethodKey = estimationMethodKey,
-                TaskEstimations = new List<UserEstimation>(),
-                EstimationStarted = null,
-                FinalEstimation = null
-            };
-        }
+        //public static ScoringTask CreateNew(ScoringTaskName name, EstimationMethodKey estimationMethodKey)
+        //{
+        //    return new ScoringTask()
+        //    {
+        //        Name = name,
+        //        EstimationMethodKey = estimationMethodKey,
+        //        TaskEstimations = new List<UserEstimation>(),
+        //        EstimationStarted = null,
+        //        FinalEstimation = null
+        //    };
+        //}
 
-        public void StartEstimation(DateTime time)
-        {
-            DomainException.ThrowIf(
-                GetStatus(time) == ScoringTaskStatus.Approved, 
-                "Scoring task is already approved");
+        //public void StartEstimation(DateTime time)
+        //{
+        //    DomainException.ThrowIf(
+        //        GetStatus(time) == ScoringTaskStatus.Approved, 
+        //        "Scoring task is already approved");
 
-            EstimationStarted = time;
-            TaskEstimations.Clear();
-        }
+        //    EstimationStarted = time;
+        //    TaskEstimations.Clear();
+        //}
 
-        public void AppendEstimation(DateTime moment, int userId, Estimation estimation)
-        {
-            DomainException.ThrowIf(
-                GetStatus(moment) != ScoringTaskStatus.EstimationStarted,
-                "Scoring task is not in estimation started state");
+        //public void AppendEstimation(DateTime moment, int userId, Estimation estimation)
+        //{
+        //    DomainException.ThrowIf(
+        //        GetStatus(moment) != ScoringTaskStatus.EstimationStarted,
+        //        "Scoring task is not in estimation started state");
 
-            DomainException.ThrowIf(
-                TaskEstimations.Any(e => e.Id.UserId == userId),
-                "User already estimated");
+        //    DomainException.ThrowIf(
+        //        TaskEstimations.Any(e => e.Id.UserId == userId),
+        //        "User already estimated");
 
-            DomainException.ThrowIf(
-                estimation.MethodKey != EstimationMethodKey,
-                $"Estimation method for user estimation {estimation.MethodKey} is different from {EstimationMethodKey}");
+        //    DomainException.ThrowIf(
+        //        estimation.MethodKey != EstimationMethodKey,
+        //        $"Estimation method for user estimation {estimation.MethodKey} is different from {EstimationMethodKey}");
 
-            TaskEstimations.Add(UserEstimation.CreateNew(UserEstimationKey.Create(userId, Id),estimation, moment));
-        }
+        //    TaskEstimations.Add(UserEstimation.CreateNew(UserEstimationKey.Create(userId, Id),estimation, moment));
+        //}
 
-        public void Approve(Estimation estimation)
-        {
-            DomainException.ThrowIf(
-                FinalEstimation != null,
-                "Final estimation is already set.");
+        //public void Approve(Estimation estimation)
+        //{
+        //    DomainException.ThrowIf(
+        //        FinalEstimation != null,
+        //        "Final estimation is already set.");
 
-            FinalEstimation = estimation;
-        }
+        //    FinalEstimation = estimation;
+        //}
     }
 
     public enum ScoringTaskStatus

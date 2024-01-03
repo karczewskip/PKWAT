@@ -1,7 +1,25 @@
 ﻿@page "/"
+@using PKWAT.ScoringPoker.Contracts.ScoringTasks
 
-<PageTitle>Home</PageTitle>
+@inject HttpClient HttpClient
 
-<h1>Hello, world!</h1>
+<PageTitle>Tasks to estimate</PageTitle>
 
-Welcome to your new app ;)
+<h1>All tasks to estimate</h1>
+
+<ul>
+    @foreach (var task in tasks)
+    {
+        <li>@task.Name</li>
+    }
+</ul>
+
+@code {
+    private IEnumerable<ScoringTaskDto> tasks = new ScoringTaskDto[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
+        tasks = response.ScoringTasks;
+    }
+}
