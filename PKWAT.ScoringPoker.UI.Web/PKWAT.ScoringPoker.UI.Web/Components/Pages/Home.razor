@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using PKWAT.ScoringPoker.Contracts.ScoringTasks
+@using System.Text.Json
 
 @inject HttpClient HttpClient
 
@@ -7,19 +8,60 @@
 
 <h1>All tasks to estimate</h1>
 
-<ul>
+<ul class="list-group">
     @foreach (var task in tasks)
     {
-        <li>@task.Name</li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @task.Name
+            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteScoringTask(task))">Delete</button>
+        </li>
     }
 </ul>
 
+<div class="card">
+    <div class="card-body">
+        <EditForm Model="CreateScoringTaskRequest" OnValidSubmit="HandleCreateScoringTask" FormName="CreateScoringTask">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText Id="name" Class="form-control" @bind-Value="CreateScoringTaskRequest.Name" />
+                <ValidationMessage For="@(() => CreateScoringTaskRequest.Name)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
 @code {
-    private IEnumerable<ScoringTaskDto> tasks = new ScoringTaskDto[0];
+    [SupplyParameterFromForm]
+    private CreateScoringTaskRequest CreateScoringTaskRequest { get; set; } = new();
+
+    private List<ScoringTaskDto> tasks = new();
 
     protected override async Task OnInitializedAsync()
     {
         var response = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
-        tasks = response.ScoringTasks;
+        tasks.AddRange(response.ScoringTasks);
+    }
+
+    private async Task HandleCreateScoringTask()
+    {
+        var response = await HttpClient.PostAsJsonAsync("api/ScoringTasks", CreateScoringTaskRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            var createResponse = JsonSerializer.Deserialize<CreateScoringTaskResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            tasks.Add(createResponse.ScoringTask);
+        }
+    }
+
+    private async Task HandleDeleteScoringTask(ScoringTaskDto scoringTask)
+    {
+        var response = await HttpClient.DeleteAsync($"api/ScoringTasks/{scoringTask.Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            tasks.Remove(scoringTask);
+        }
     }
 }
