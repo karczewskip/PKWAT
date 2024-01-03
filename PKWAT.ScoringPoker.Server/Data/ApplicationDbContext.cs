@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
+    using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
 
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
         : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
@@ -13,6 +14,14 @@
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<ScoringTask>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Name)
+                    .HasConversion(x => x.Name, x => ScoringTaskName.Create(x))
+                    .HasMaxLength(ScoringTaskName.MaxLength);
+            });
 
             //builder.Entity<ScoringTaskUser>()
             //    .HasKey(x => new { x.ScoringTaskId, x.UserId });

@@ -27,11 +27,11 @@
     public class UserEstimationKey : ValueObject
     {
         public int UserId { get; protected set; }
-        public ScoringTaskKey ScoringTaskId { get; protected set; }
+        public int ScoringTaskId { get; protected set; }
 
         private UserEstimationKey() { }
 
-        public static UserEstimationKey Create(int userId, ScoringTaskKey scoringTaskId)
+        public static UserEstimationKey Create(int userId, int scoringTaskId)
         {
             return new UserEstimationKey()
             {

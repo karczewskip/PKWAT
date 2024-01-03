@@ -7,16 +7,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ScoringTaskKey : ValueObject
-    {
-        public int Value { get; protected set; }
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Value;
-        }
-    }
-
-    public class ScoringTask : Entity<ScoringTaskKey>, IAggregateRoot<ScoringTaskKey>
+    public class ScoringTask : Entity<int>, IAggregateRoot<int>
     {
         protected ScoringTask()
         {
