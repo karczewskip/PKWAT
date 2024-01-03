@@ -45,17 +45,17 @@
         //    return ScoringTaskStatus.EstimationStarted;
         //}
 
-        //public static ScoringTask CreateNew(ScoringTaskName name, EstimationMethodKey estimationMethodKey)
-        //{
-        //    return new ScoringTask()
-        //    {
-        //        Name = name,
-        //        EstimationMethodKey = estimationMethodKey,
-        //        TaskEstimations = new List<UserEstimation>(),
-        //        EstimationStarted = null,
-        //        FinalEstimation = null
-        //    };
-        //}
+        public static ScoringTask CreateNew(ScoringTaskName name/*, EstimationMethodKey estimationMethodKey*/)
+        {
+            return new ScoringTask()
+            {
+                Name = name,
+                //EstimationMethodKey = estimationMethodKey,
+                //TaskEstimations = new List<UserEstimation>(),
+                //EstimationStarted = null,
+                //FinalEstimation = null
+            };
+        }
 
         //public void StartEstimation(DateTime time)
         //{
