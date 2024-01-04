@@ -1,0 +1,67 @@
+﻿@page "/estimationMethods"
+
+@using PKWAT.ScoringPoker.Contracts.EstimationMethods
+@using System.Text.Json
+
+@inject HttpClient HttpClient
+
+<h3>EstimationMethods</h3>
+
+<ul class="list-group">
+    @foreach (var estimationMethod in estimationMethods)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @estimationMethod.Name
+            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteEstimationMethod(estimationMethod))">Delete</button>
+        </li>
+    }
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <EditForm Model="CreateEstimationMethodRequest" OnValidSubmit="HandleCreateEstimationMethod" FormName="CreateEstimationMethod">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <InputText Id="name" Class="form-control" @bind-Value="CreateEstimationMethodRequest.Name" />
+                <ValidationMessage For="@(() => CreateEstimationMethodRequest.Name)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromForm]
+    private CreateEstimationMethodRequest CreateEstimationMethodRequest { get; set; } = new();
+
+    private List<EstimationMethodDto> estimationMethods = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetFromJsonAsync<GetEstimationMethodsResponse>("api/EstimationMethods");
+        estimationMethods.AddRange(response.EstimationMethods);
+    }
+
+    private async Task HandleCreateEstimationMethod()
+    {
+        var response = await HttpClient.PostAsJsonAsync("api/EstimationMethods", CreateEstimationMethodRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            var createResponse = JsonSerializer.Deserialize<CreateEstimationMethodResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            estimationMethods.Add(createResponse.EstimationMethod);
+        }
+    }
+
+    private async Task HandleDeleteEstimationMethod(EstimationMethodDto estimationMethod)
+    {
+        var response = await HttpClient.DeleteAsync($"api/EstimationMethods/{estimationMethod.Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            estimationMethods.Remove(estimationMethod);
+        }
+    }
+}
