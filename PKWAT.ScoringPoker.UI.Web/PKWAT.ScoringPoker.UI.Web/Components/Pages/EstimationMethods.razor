@@ -11,7 +11,9 @@
     @foreach (var estimationMethod in EstimationMethodsList)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            @estimationMethod.Name
+            <a class="alert-link" href="estimationMethods/@estimationMethod.Id">
+                @estimationMethod.Name
+            </a>
             <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteEstimationMethod(estimationMethod))">Delete</button>
         </li>
     }
