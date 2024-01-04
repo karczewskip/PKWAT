@@ -2,35 +2,15 @@
 {
     using PKWAT.ScoringPoker.Domain.Abstraction;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
-    using System.Collections.Generic;
 
-    public class EstimationMethodKey : ValueObject
-    {
-        private EstimationMethodKey() { }
-
-        public int Value { get; private set; }
-
-        public static EstimationMethodKey Create(int value)
-        {
-            return new EstimationMethodKey()
-            {
-                Value = value
-            };
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Value;
-        }
-    }
-
-    public class EstimationMethod : Entity<EstimationMethodKey>, IAggregateRoot<EstimationMethodKey>
+    public class EstimationMethod : Entity<int>, IAggregateRoot<int>
     {
         protected EstimationMethod()
         {
         }
 
         public EstimationMethodName Name { get; protected set; }
+        public ICollection<EstimationMethodPossibleValue> PossibleValues { get; protected set; }
 
         public static EstimationMethod CreateNew(EstimationMethodName name)
         {
@@ -38,6 +18,15 @@
             {
                 Name = name
             };
+        }
+
+        public void AddPossibleValue(EstimationMethodValue value)
+        {
+            DomainException.ThrowIf(
+                PossibleValues.Any(x => x.EstimationMethodValue == value),
+                $"Estimation method already contains value {value}");
+
+            PossibleValues.Add(EstimationMethodPossibleValue.CreateNew(Id, value));
         }
     }
 }

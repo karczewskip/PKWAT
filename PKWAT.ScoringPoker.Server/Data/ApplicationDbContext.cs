@@ -3,6 +3,8 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
+    using PKWAT.ScoringPoker.Domain.EstimationMethod.Entities;
+    using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
     using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
 
@@ -10,6 +12,8 @@
         : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
     {
         public DbSet<ScoringTask> ScoringTasks { get; set; }
+        public DbSet<EstimationMethod> EstimationMethods { get; set; }
+        public DbSet<EstimationMethodPossibleValue> EstimationMethodPossibleValues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -18,9 +22,31 @@
             builder.Entity<ScoringTask>(b =>
             {
                 b.HasKey(x => x.Id);
+
                 b.Property(x => x.Name)
                     .HasConversion(x => x.Name, x => ScoringTaskName.Create(x))
                     .HasMaxLength(ScoringTaskName.MaxLength);
+            });
+
+            builder.Entity<EstimationMethod>(b =>
+            {
+                b.HasKey(x => x.Id);
+
+                b.HasMany(x => x.PossibleValues)
+                .WithOne()
+                .HasForeignKey(x => x.EstimationMethodId);
+
+                b.Property(x => x.Name)
+                    .HasConversion(x => x.Value, x => EstimationMethodName.Create(x))
+                    .HasMaxLength(EstimationMethodName.MaxLength);
+            });
+
+            builder.Entity<EstimationMethodPossibleValue>(b =>
+            {
+                b.HasKey(x => x.Id);
+                b.Property(x => x.EstimationMethodValue)
+                    .HasConversion(x => x.Value, x => EstimationMethodValue.Create(x))
+                    .HasMaxLength(EstimationMethodValue.MaxLength);
             });
 
             //builder.Entity<ScoringTaskUser>()

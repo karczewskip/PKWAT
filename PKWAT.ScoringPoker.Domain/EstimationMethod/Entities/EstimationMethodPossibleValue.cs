@@ -3,39 +3,21 @@
     using PKWAT.ScoringPoker.Domain.Abstraction;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
 
-    public class EstimationMethodPossibleValueKey : ValueObject
+    public class EstimationMethodPossibleValue : Entity<int>
     {
-        public EstimationMethodKey EstimationMethodKey { get; protected set; }
+        public int EstimationMethodId { get; protected set; }
         public EstimationMethodValue EstimationMethodValue { get; protected set; }
 
-        private EstimationMethodPossibleValueKey() { }
-
-        public static EstimationMethodPossibleValueKey Create(EstimationMethodKey methodKey, EstimationMethodValue methodValue)
-        {
-            return new EstimationMethodPossibleValueKey()
-            {
-                EstimationMethodKey = methodKey,
-                EstimationMethodValue = methodValue
-            };
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return EstimationMethodKey;
-        }
-    }
-
-    public class EstimationMethodPossibleValue : Entity<EstimationMethodPossibleValueKey>
-    {
         protected EstimationMethodPossibleValue()
         {
         }
 
-        public static EstimationMethodPossibleValue CreateNew(EstimationMethodPossibleValueKey key)
+        public static EstimationMethodPossibleValue CreateNew(int estimationMethodId, EstimationMethodValue methodValue)
         {
             return new EstimationMethodPossibleValue()
             {
-                Id = key
+                EstimationMethodId = estimationMethodId,
+                EstimationMethodValue = methodValue
             };
         }
     }

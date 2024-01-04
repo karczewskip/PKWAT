@@ -21,7 +21,10 @@
         [HttpGet]
         public async Task<IActionResult> GetScoringTasks(CancellationToken cancellationToken)
         {
-            var scoringTasks = await _dbContext.ScoringTasks.ToListAsync(cancellationToken);
+            var scoringTasks = await _dbContext
+                .ScoringTasks
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
 
             return Ok(new GetScoringTasksResponse
             {
@@ -38,7 +41,9 @@
         {
             var newScoringTask = ScoringTask.CreateNew(ScoringTaskName.Create(request.Name));
 
-            var entry = await _dbContext.ScoringTasks.AddAsync(newScoringTask, cancellationToken);
+            var entry = await _dbContext
+                .ScoringTasks
+                .AddAsync(newScoringTask, cancellationToken);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -55,7 +60,10 @@
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteScoringTask(int id, CancellationToken cancellationToken)
         {
-            await _dbContext.ScoringTasks.Where(x => x.Id == id).ExecuteDeleteAsync(cancellationToken);
+            await _dbContext
+                .ScoringTasks
+                .Where(x => x.Id == id)
+                .ExecuteDeleteAsync(cancellationToken);
 
             return Ok();
         }
