@@ -132,11 +132,20 @@
                 return BadRequest("Estimation method with given id does not exist.");
             }
 
-            estimationMethod.AddPossibleValue(EstimationMethodValue.Create(request.Value));
+            var newPossibleValue = estimationMethod.AddPossibleValue(EstimationMethodValue.Create(request.Value));
+
+            var entry = _dbContext.Entry(newPossibleValue);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return Ok();
+            return Ok(new CreateEstimationMethodValueResponse
+            {
+                Value = new EstimationMethodValueDto 
+                {
+                    Id = entry.Entity.Id,
+                    Value = entry.Entity.EstimationMethodValue.Value
+                }
+            });
         }
 
         [HttpDelete("{estimationMethodId}/possible-values/{valueId}")]

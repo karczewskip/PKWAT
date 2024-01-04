@@ -5,10 +5,10 @@
 
 @inject HttpClient HttpClient
 
-<h3>EstimationMethods</h3>
+<h3>Estimation methods</h3>
 
 <ul class="list-group">
-    @foreach (var estimationMethod in estimationMethods)
+    @foreach (var estimationMethod in EstimationMethodsList)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
             @estimationMethod.Name
@@ -38,12 +38,12 @@
     [SupplyParameterFromForm]
     private CreateEstimationMethodRequest CreateEstimationMethodRequest { get; set; } = new();
 
-    private List<EstimationMethodDto> estimationMethods = new();
+    private List<EstimationMethodDto> EstimationMethodsList = new();
 
     protected override async Task OnInitializedAsync()
     {
         var response = await HttpClient.GetFromJsonAsync<GetEstimationMethodsResponse>("api/EstimationMethods");
-        estimationMethods.AddRange(response.EstimationMethods);
+        EstimationMethodsList.AddRange(response.EstimationMethods);
     }
 
     private async Task HandleCreateEstimationMethod()
@@ -52,7 +52,7 @@
         if (response.IsSuccessStatusCode)
         {
             var createResponse = JsonSerializer.Deserialize<CreateEstimationMethodResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            estimationMethods.Add(createResponse.EstimationMethod);
+            EstimationMethodsList.Add(createResponse.EstimationMethod);
         }
     }
 
@@ -61,7 +61,7 @@
         var response = await HttpClient.DeleteAsync($"api/EstimationMethods/{estimationMethod.Id}");
         if (response.IsSuccessStatusCode)
         {
-            estimationMethods.Remove(estimationMethod);
+            EstimationMethodsList.Remove(estimationMethod);
         }
     }
 }

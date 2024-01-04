@@ -1,0 +1,71 @@
+﻿@page "/estimationMethods/{EstimationMethodId}"
+
+@using PKWAT.ScoringPoker.Contracts.EstimationMethods
+@using System.Text.Json
+
+@inject HttpClient HttpClient
+
+<h3>Estimation method values for: @EstimationMethodInfo?.Name</h3>
+
+<ul class="list-group">
+    @foreach (var estimationMethodValue in EstimationMethodValues)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @estimationMethodValue.Value
+            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteEstimationMethodValue(estimationMethodValue))">Delete</button>
+        </li>
+    }
+</ul>
+
+<div class="card">
+    <div class="card-body">
+        <EditForm Model="CreateEstimationMethodValueRequest" OnValidSubmit="HandleCreateEstimationMethodValue" FormName="CreateEstimationMethodValue">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label for="name">Value</label>
+                <InputText Id="name" Class="form-control" @bind-Value="CreateEstimationMethodValueRequest.Value" />
+                <ValidationMessage For="@(() => CreateEstimationMethodValueRequest.Value)" />
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string EstimationMethodId { get; set; }
+
+    [SupplyParameterFromForm]
+    private CreateEstimationMethodValueRequest CreateEstimationMethodValueRequest { get; set; } = new();
+
+    private EstimationMethodDto? EstimationMethodInfo;
+    private List<EstimationMethodValueDto> EstimationMethodValues = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await HttpClient.GetFromJsonAsync<GetEstimationMethodWithValuesResponse>($"api/EstimationMethods/{EstimationMethodId}");
+        EstimationMethodInfo = response.EstimationMethod;
+        EstimationMethodValues.AddRange(response.EstimationMethodValues);
+    }
+
+    private async Task HandleCreateEstimationMethodValue()
+    {
+        var response = await HttpClient.PostAsJsonAsync($"api/EstimationMethods/{EstimationMethodId}/possible-values", CreateEstimationMethodValueRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            var createResponse = JsonSerializer.Deserialize<CreateEstimationMethodValueResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            EstimationMethodValues.Add(createResponse.Value);
+        }
+    }
+
+    private async Task HandleDeleteEstimationMethodValue(EstimationMethodValueDto estimationMethodValue)
+    {
+        var response = await HttpClient.DeleteAsync($"api/EstimationMethods/{EstimationMethodId}/possible-values/{estimationMethodValue.Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            EstimationMethodValues.Remove(estimationMethodValue);
+        }
+    }
+}

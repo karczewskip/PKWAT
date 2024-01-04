@@ -20,13 +20,17 @@
             };
         }
 
-        public void AddPossibleValue(EstimationMethodValue value)
+        public EstimationMethodPossibleValue AddPossibleValue(EstimationMethodValue value)
         {
             DomainException.ThrowIf(
                 PossibleValues.Any(x => x.EstimationMethodValue == value),
                 $"Estimation method already contains value {value}");
 
-            PossibleValues.Add(EstimationMethodPossibleValue.CreateNew(Id, value));
+            var newPossibleValue = EstimationMethodPossibleValue.CreateNew(Id, value);
+
+            PossibleValues.Add(newPossibleValue);
+
+            return newPossibleValue;
         }
     }
 }
