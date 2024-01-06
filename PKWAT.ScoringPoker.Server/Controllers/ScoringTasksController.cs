@@ -1,5 +1,7 @@
 ﻿namespace PKWAT.ScoringPoker.Server.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Contracts.ScoringTasks;
@@ -9,13 +11,16 @@
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ScoringTasksController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ScoringTasksController(ApplicationDbContext dbContext)
+        public ScoringTasksController(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -51,7 +56,14 @@
                 return BadRequest($"No estimation method with id: {request.EstimationMethodId}");
             }
 
-            var newScoringTask = ScoringTask.CreateNew(ScoringTaskName.Create(request.Name), request.EstimationMethodId);
+            var owner = await _userManager.GetUserAsync(User);
+
+            if (owner == null)
+            {
+                return Unauthorized($"Cannot get user {User?.Identity?.Name}");
+            }
+
+            var newScoringTask = ScoringTask.CreateNew(ScoringTaskName.Create(request.Name), request.EstimationMethodId, owner.Id);
 
             var entry = await _dbContext
                 .ScoringTasks

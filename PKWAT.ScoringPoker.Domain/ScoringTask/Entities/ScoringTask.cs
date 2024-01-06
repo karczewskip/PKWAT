@@ -21,6 +21,8 @@
 
         public EstimationMethod EstimationMethod { get; protected set; }
 
+        public int OwnerId { get; protected set; }
+
         //public DateTime? EstimationStarted { get; protected set; }
 
         //public DateTime? ScheduledEstimationFinish { get; protected set; }
@@ -49,12 +51,14 @@
         //    return ScoringTaskStatus.EstimationStarted;
         //}
 
-        public static ScoringTask CreateNew(ScoringTaskName name, int estimationMethodId)
+        public static ScoringTask CreateNew(ScoringTaskName name, int estimationMethodId, int ownerId)
         {
             return new ScoringTask()
             {
                 Name = name,
+                Status = ScoringTaskStatusId.Created,
                 EstimationMethodId = estimationMethodId,
+                OwnerId = ownerId,
                 //TaskEstimations = new List<UserEstimation>(),
                 //EstimationStarted = null,
                 //FinalEstimation = null

@@ -35,7 +35,8 @@
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, login.Email!)
+                new Claim(ClaimTypes.Name, login.Email!),
+                new Claim(ClaimTypes.NameIdentifier, User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
