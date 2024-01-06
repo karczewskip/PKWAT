@@ -14,9 +14,12 @@
         }
 
         public ScoringTaskName Name { get; protected set; }
+        
         public ScoringTaskStatusId Status { get; protected set; }
 
-        //public EstimationMethodKey EstimationMethodKey { get; protected set; }
+        public int EstimationMethodId { get; protected set; }
+
+        public EstimationMethod EstimationMethod { get; protected set; }
 
         //public DateTime? EstimationStarted { get; protected set; }
 
@@ -46,12 +49,12 @@
         //    return ScoringTaskStatus.EstimationStarted;
         //}
 
-        public static ScoringTask CreateNew(ScoringTaskName name/*, EstimationMethodKey estimationMethodKey*/)
+        public static ScoringTask CreateNew(ScoringTaskName name, int estimationMethodId)
         {
             return new ScoringTask()
             {
                 Name = name,
-                //EstimationMethodKey = estimationMethodKey,
+                EstimationMethodId = estimationMethodId,
                 //TaskEstimations = new List<UserEstimation>(),
                 //EstimationStarted = null,
                 //FinalEstimation = null
@@ -133,15 +136,7 @@
         public string Name { get; protected set; }
 
         protected ScoringTaskStatus()
-        {
-            
-        }
-
-        //public static ScoringTaskStatus Created => new ScoringTaskStatus()
-        //{
-        //    Id = ScoringTaskStatusId.Created,
-        //    Name = "Created"
-        //};
+        {}
 
         public static ScoringTaskStatus Create(ScoringTaskStatusId id)
         {

@@ -23,6 +23,7 @@
         {
             var scoringTasks = await _dbContext
                 .ScoringTasks
+                .Include(x => x.EstimationMethod)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -31,7 +32,8 @@
                 ScoringTasks = scoringTasks.Select(x => new ScoringTaskDto
                 {
                     Id = x.Id,
-                    Name = x.Name.Name
+                    Name = x.Name.Name,
+                    EstimationMethod = x.EstimationMethod.Name.Value
                 })
             });
         }
@@ -39,7 +41,17 @@
         [HttpPost]
         public async Task<IActionResult> CreateScoringTask(CreateScoringTaskRequest request, CancellationToken cancellationToken)
         {
-            var newScoringTask = ScoringTask.CreateNew(ScoringTaskName.Create(request.Name));
+            var estimationMethod = await _dbContext
+                .EstimationMethods
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == request.EstimationMethodId, cancellationToken);
+
+            if (estimationMethod is null)
+            {
+                return BadRequest($"No estimation method with id: {request.EstimationMethodId}");
+            }
+
+            var newScoringTask = ScoringTask.CreateNew(ScoringTaskName.Create(request.Name), request.EstimationMethodId);
 
             var entry = await _dbContext
                 .ScoringTasks
@@ -52,7 +64,8 @@
                 ScoringTask = new ScoringTaskDto
                 {
                     Id = entry.Entity.Id,
-                    Name = entry.Entity.Name.Name
+                    Name = entry.Entity.Name.Name,
+                    EstimationMethod = entry.Entity.EstimationMethod.Name.Value
                 }
             });
         }
