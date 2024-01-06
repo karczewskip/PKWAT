@@ -35,8 +35,12 @@
                 await Clients
                     .Group(observer.ScoringTaskId.ToString())
                     .ReceiveNotification($"{observer.Name} left task {observer.ScoringTaskId}");
+
+                _liveEstimationObserversInMemoryStore.RemoveObserver(Context.ConnectionId);
+
+                await SendInfoForAllObservers(observer.ScoringTaskId);
             }
-            _liveEstimationObserversInMemoryStore.RemoveObserver(Context.ConnectionId);
+
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -50,6 +54,11 @@
                 .Group(scoringTaskId.ToString())
                 .ReceiveNotification($"{Context.User?.Identity?.Name} joined to task {scoringTaskId}");
 
+            await SendInfoForAllObservers(scoringTaskId);
+        }
+
+        private async Task SendInfoForAllObservers(int scoringTaskId)
+        {
             var scoringTask = await _dbContext.ScoringTasks.AsNoTracking().FirstOrDefaultAsync(x => x.Id == scoringTaskId);
 
             await Clients.Group(scoringTaskId.ToString()).ReceiveScoringTaskStatus(new LiveEstimationScoringTaskStatusDto
@@ -58,6 +67,7 @@
                 ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
                 ScoringTaskObservers = _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId).Select(x => x.Name).ToArray()
             });
+
         }
     }
 
