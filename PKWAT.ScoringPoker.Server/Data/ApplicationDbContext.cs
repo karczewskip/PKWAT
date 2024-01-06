@@ -27,6 +27,11 @@
                 b.Property(x => x.Name)
                     .HasConversion(x => x.Name, x => ScoringTaskName.Create(x))
                     .HasMaxLength(ScoringTaskName.MaxLength);
+
+                b.HasOne(x => x.EstimationMethod)
+                    .WithMany()
+                    .HasForeignKey(x => x.EstimationMethodId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<ScoringTaskStatus>(b =>
