@@ -67,6 +67,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<ScoringTaskHub>("scoringTask");
+app.MapHub<LiveEstimationHub>("liveEstimation");
 
 app.Run();

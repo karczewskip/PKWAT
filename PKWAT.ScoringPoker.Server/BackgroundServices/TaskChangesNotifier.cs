@@ -9,8 +9,8 @@
     {
         private static readonly TimeSpan Period = TimeSpan.FromSeconds(5);
 
-        private readonly IHubContext<ScoringTaskHub, IScoringTaskClient> _hubContext;
-        public TaskChangesNotifier(IHubContext<ScoringTaskHub, IScoringTaskClient> hubContext)
+        private readonly IHubContext<LiveEstimationHub, ILiveEstimationClient> _hubContext;
+        public TaskChangesNotifier(IHubContext<LiveEstimationHub, ILiveEstimationClient> hubContext)
         {
             _hubContext = hubContext;
         }

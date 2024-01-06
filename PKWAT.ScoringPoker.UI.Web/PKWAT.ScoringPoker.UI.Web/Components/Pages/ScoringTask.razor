@@ -4,6 +4,7 @@
 
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.SignalR.Client
+@using PKWAT.ScoringPoker.Contracts.LiveEstimation
 @* @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize] *@
 
@@ -15,7 +16,7 @@
 
 <PageTitle>ScoringTask</PageTitle>
 
-<h1>Test Scoring task</h1>
+<h1>Test Scoring task @StatusDto?.ScoringTaskName</h1>
 
 Messages from the server:
 
@@ -30,6 +31,8 @@ Messages from the server:
     [Parameter]
     public string TaskId { get; set; }
 
+    public LiveEstimationScoringTaskStatusDto? StatusDto { get; set; }
+
     private HubConnection? hubConnection;
     private readonly List<string> messages = new();
 
@@ -38,7 +41,7 @@ Messages from the server:
         var token = await LocalStorageService.GetItemAsync<string?>("authToken");
 
         hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7173/scoringTask",
+            .WithUrl("https://localhost:7173/liveEstimation",
             o => o.AccessTokenProvider = () => LocalStorageService.GetItemAsync<string?>("authToken").AsTask())
             .Build();
 
@@ -46,6 +49,12 @@ Messages from the server:
         hubConnection.On<string>("ReceiveNotification", message =>
         {
             messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<LiveEstimationScoringTaskStatusDto>("ReceiveScoringTaskStatus", statusDto =>
+        {
+            StatusDto = statusDto;
             InvokeAsync(StateHasChanged);
         });
 
