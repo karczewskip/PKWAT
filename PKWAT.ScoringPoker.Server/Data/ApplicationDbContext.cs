@@ -12,6 +12,7 @@
         : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
     {
         public DbSet<ScoringTask> ScoringTasks { get; set; }
+        public DbSet<ScoringTaskStatus> ScoringTaskStatuses { get; set; }
         public DbSet<EstimationMethod> EstimationMethods { get; set; }
         public DbSet<EstimationMethodPossibleValue> EstimationMethodPossibleValues { get; set; }
 
@@ -26,6 +27,21 @@
                 b.Property(x => x.Name)
                     .HasConversion(x => x.Name, x => ScoringTaskName.Create(x))
                     .HasMaxLength(ScoringTaskName.MaxLength);
+            });
+
+            builder.Entity<ScoringTaskStatus>(b =>
+            {
+                b.HasKey(x => x.Id);
+
+                b.Property(x => x.Name)
+                    .HasMaxLength(Enum.GetValues(typeof(ScoringTaskStatusId))
+                    .Cast<ScoringTaskStatusId>()
+                    .Max(x => x.ToFriendlyString().Length));
+
+                b.HasData(
+                    Enum.GetValues(typeof(ScoringTaskStatusId))
+                    .Cast<ScoringTaskStatusId>()
+                    .Select(ScoringTaskStatus.Create));
             });
 
             builder.Entity<EstimationMethod>(b =>
@@ -44,6 +60,7 @@
             builder.Entity<EstimationMethodPossibleValue>(b =>
             {
                 b.HasKey(x => x.Id);
+
                 b.Property(x => x.EstimationMethodValue)
                     .HasConversion(x => x.Value, x => EstimationMethodValue.Create(x))
                     .HasMaxLength(EstimationMethodValue.MaxLength);

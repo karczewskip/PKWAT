@@ -14,6 +14,7 @@
         }
 
         public ScoringTaskName Name { get; protected set; }
+        public ScoringTaskStatusId Status { get; protected set; }
 
         //public EstimationMethodKey EstimationMethodKey { get; protected set; }
 
@@ -94,11 +95,61 @@
         //}
     }
 
-    public enum ScoringTaskStatus
+    public enum ScoringTaskStatusId
     {
         Created,
         EstimationStarted,
         EstimationFinished,
         Approved
+    }
+
+    public static class ScoringTaskStatusIdExtensions
+    {
+        public static ScoringTaskStatus ToScoringTaskStatus(this ScoringTaskStatusId id)
+        {
+            return ScoringTaskStatus.Create(id);
+        }
+
+        public static string ToFriendlyString(this ScoringTaskStatusId id)
+        {
+            switch (id)
+            {
+                case ScoringTaskStatusId.Created:
+                    return "Created";
+                case ScoringTaskStatusId.EstimationStarted:
+                    return "Estimation started";
+                case ScoringTaskStatusId.EstimationFinished:
+                    return "Estimation finished";
+                case ScoringTaskStatusId.Approved:
+                    return "Approved";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(id), id, null);
+            }
+        }
+    }
+
+    public class ScoringTaskStatus : Entity<ScoringTaskStatusId>
+    {
+        public string Name { get; protected set; }
+
+        protected ScoringTaskStatus()
+        {
+            
+        }
+
+        //public static ScoringTaskStatus Created => new ScoringTaskStatus()
+        //{
+        //    Id = ScoringTaskStatusId.Created,
+        //    Name = "Created"
+        //};
+
+        public static ScoringTaskStatus Create(ScoringTaskStatusId id)
+        {
+            return new ScoringTaskStatus()
+            {
+                Id = id,
+                Name = id.ToFriendlyString()
+            };
+        }
     }
 }
