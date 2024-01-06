@@ -12,7 +12,9 @@
     @foreach (var task in tasks)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
-            @task.Name
+            <a class="alert-link" href="scoringTasks/@task.Id">
+                @task.Name
+            </a>
             <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteScoringTask(task))">Delete</button>
         </li>
     }

@@ -1,8 +1,13 @@
-﻿@page "/scoringTask"
+﻿@page "/scoringTasks/{TaskId}"
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.SignalR.Client
 @* @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize] *@
+
+
 
 @inject ILocalStorageService LocalStorageService
 
@@ -22,15 +27,21 @@ Messages from the server:
 </ul>
 
 @code {
+    [Parameter]
+    public string TaskId { get; set; }
+
     private HubConnection? hubConnection;
     private readonly List<string> messages = new();
 
     protected override async Task OnInitializedAsync()
     {
+        var token = await LocalStorageService.GetItemAsync<string?>("authToken");
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl("https://localhost:7173/scoringTask",
             o => o.AccessTokenProvider = () => LocalStorageService.GetItemAsync<string?>("authToken").AsTask())
             .Build();
+
 
         hubConnection.On<string>("ReceiveNotification", message =>
         {
@@ -39,6 +50,8 @@ Messages from the server:
         });
 
         await hubConnection.StartAsync();
+
+        await hubConnection.SendAsync("ObserveScoringTask", int.Parse(TaskId));
     }
 
     public async ValueTask DisposeAsync()

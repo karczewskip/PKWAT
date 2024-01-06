@@ -13,6 +13,15 @@
 
             await base.OnConnectedAsync();
         }
+
+        public async Task ObserveScoringTask(int scoringTask)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, scoringTask.ToString());
+
+            await Clients
+                .Group(scoringTask.ToString())
+                .ReceiveNotification($"{Context.User?.Identity?.Name} joined to task {scoringTask}");
+        }
     }
 
     public interface IScoringTaskClient
