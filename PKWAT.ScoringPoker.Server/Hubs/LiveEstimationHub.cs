@@ -4,6 +4,7 @@
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Contracts.LiveEstimation;
+    using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
     using PKWAT.ScoringPoker.Server.Data;
 
     [Authorize]
@@ -36,7 +37,8 @@
 
             await Clients.Client(Context.ConnectionId).ReceiveScoringTaskStatus(new LiveEstimationScoringTaskStatusDto
             {
-                ScoringTaskName = scoringTask.Name.Name
+                ScoringTaskName = scoringTask.Name.Name,
+                ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
             });
         }
     }

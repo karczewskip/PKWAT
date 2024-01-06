@@ -9,5 +9,6 @@
     public class LiveEstimationScoringTaskStatusDto
     {
         public string ScoringTaskName { get; set; }
+        public string ScoringTaskStatus { get; set; }
     }
 }
