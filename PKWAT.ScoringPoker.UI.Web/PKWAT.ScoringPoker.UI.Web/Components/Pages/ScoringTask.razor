@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using PKWAT.ScoringPoker.Contracts.LiveEstimation
 @using Microsoft.AspNetCore.Authorization
+
 @attribute [Authorize]
 
 @inject ILocalStorageService LocalStorageService
@@ -17,6 +18,15 @@
 <h1>Test Scoring task @StatusDto?.ScoringTaskName</h1>
 
 <h2>Current status: @StatusDto?.ScoringTaskStatus</h2>
+
+Observers:
+
+<ul>
+    @foreach (var observer in StatusDto?.ScoringTaskObservers ?? [])
+    {
+        <li>@observer</li>
+    }
+</ul>
 
 Messages from the server:
 

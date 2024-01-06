@@ -8,7 +8,8 @@
 
     public class LiveEstimationScoringTaskStatusDto
     {
-        public string ScoringTaskName { get; set; }
-        public string ScoringTaskStatus { get; set; }
+        public required string ScoringTaskName { get; set; }
+        public required string ScoringTaskStatus { get; set; }
+        public required string[] ScoringTaskObservers { get; set; }
     }
 }
