@@ -13,20 +13,15 @@
     {
         private static readonly TimeSpan Period = TimeSpan.FromSeconds(5);
 
-        private readonly ApplicationDbContext _dbContext;
-
         private readonly IHubContext<LiveEstimationHub, ILiveEstimationClient> _hubContext;
-
-        private readonly ILiveEstimationScoringTaskStatusFactory _liveEstimationScoringTaskStatusFactory;
+        private readonly IServiceProvider _serviceProvider;
 
         public TaskChangesNotifier(
-            ApplicationDbContext dbContext ,
-            IHubContext<LiveEstimationHub, ILiveEstimationClient> hubContext, 
-            ILiveEstimationScoringTaskStatusFactory liveEstimationScoringTaskStatusFactory)
+            IHubContext<LiveEstimationHub, ILiveEstimationClient> hubContext,
+            IServiceProvider serviceProvider)
         {
-            _dbContext = dbContext;
             _hubContext = hubContext;
-            _liveEstimationScoringTaskStatusFactory = liveEstimationScoringTaskStatusFactory;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,25 +34,35 @@
                 var dateTime = DateTime.Now;
 
                 await _hubContext.Clients.All.ReceiveNotification($"The time is {dateTime}");
+
+                await CheckDeadlines(dateTime);
             }
         }
 
-        private async Task CheckDeadlines()
+        private async Task CheckDeadlines(DateTime currentTime)
         {
-            var currentTime = DateTime.Now;
-            var scoringTasksToUpdate = await _dbContext.ScoringTasks.Where(x => x.Status == ScoringTaskStatusId.EstimationStarted && x.ScheduledEstimationFinish < currentTime).ToArrayAsync();
+            using var scope = _serviceProvider.CreateScope();
 
-            foreach (var scoringTask in scoringTasksToUpdate)
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var scoringTasksToUpdate = await dbContext.ScoringTasks.Where(x => x.Status == ScoringTaskStatusId.EstimationStarted && x.ScheduledEstimationFinish < currentTime).ToArrayAsync();
+
+            if( scoringTasksToUpdate.Any() )
             {
-                scoringTask.FinishEstimation();
-            }
+                foreach (var scoringTask in scoringTasksToUpdate)
+                {
+                    scoringTask.FinishEstimation();
+                }
 
-            await _dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync();
 
-            foreach (var scoringTask in scoringTasksToUpdate)
-            {
-                var statusDto = await _liveEstimationScoringTaskStatusFactory.GenerateStatusDtoForScoringTask(scoringTask.Id);
-                await _hubContext.Clients.Groups(scoringTask.Id.ToString()).ReceiveScoringTaskStatus(statusDto);
+                var liveEstimationScoringTaskStatusFactory = scope.ServiceProvider.GetRequiredService<ILiveEstimationScoringTaskStatusFactory>();
+
+                foreach (var scoringTask in scoringTasksToUpdate)
+                {
+                    var statusDto = await liveEstimationScoringTaskStatusFactory.GenerateStatusDtoForScoringTask(scoringTask.Id);
+                    await _hubContext.Clients.Groups(scoringTask.Id.ToString()).ReceiveScoringTaskStatus(statusDto);
+                }
             }
         }
     }

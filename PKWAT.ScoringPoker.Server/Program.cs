@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using PKWAT.ScoringPoker.Server.Hubs;
 using PKWAT.ScoringPoker.Server.BackgroundServices;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using PKWAT.ScoringPoker.Server.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddSingleton<ILiveEstimationObserversInMemoryStore, LiveEstimationObserversInMemoryStore>();
+builder.Services.AddTransient<ILiveEstimationScoringTaskStatusFactory, LiveEstimationScoringTaskStatusFactory>();
 
 var app = builder.Build();
 
