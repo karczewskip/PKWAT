@@ -11,5 +11,6 @@
         public required string ScoringTaskName { get; set; }
         public required string ScoringTaskStatus { get; set; }
         public required string[] ScoringTaskObservers { get; set; }
+        public required string ScoringTaskOwner { get; set; }
     }
 }

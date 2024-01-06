@@ -23,33 +23,13 @@
 
         public int OwnerId { get; protected set; }
 
-        //public DateTime? EstimationStarted { get; protected set; }
+        public DateTime? EstimationStarted { get; protected set; }
 
-        //public DateTime? ScheduledEstimationFinish { get; protected set; }
-
-        //public Estimation? FinalEstimation { get; protected set; }
+        public DateTime? ScheduledEstimationFinish { get; protected set; }
 
         //public ICollection<UserEstimation> TaskEstimations { get; protected set; }
 
-        //public ScoringTaskStatus GetStatus(DateTime time)
-        //{
-        //    if(EstimationStarted == null)
-        //    {
-        //        return ScoringTaskStatus.Created;
-        //    }
-
-        //    if(FinalEstimation != null)
-        //    {
-        //        return ScoringTaskStatus.Approved;
-        //    }
-
-        //    if(ScheduledEstimationFinish < time)
-        //    {
-        //        return ScoringTaskStatus.EstimationFinished;
-        //    }
-
-        //    return ScoringTaskStatus.EstimationStarted;
-        //}
+        //public Estimation? FinalEstimation { get; protected set; }
 
         public static ScoringTask CreateNew(ScoringTaskName name, int estimationMethodId, int ownerId)
         {
@@ -65,15 +45,26 @@
             };
         }
 
-        //public void StartEstimation(DateTime time)
-        //{
-        //    DomainException.ThrowIf(
-        //        GetStatus(time) == ScoringTaskStatus.Approved, 
-        //        "Scoring task is already approved");
+        public void StartEstimation(int userId, DateTime time, DateTime finishTime)
+        {
+            DomainException.ThrowIf(
+                Status is ScoringTaskStatusId.EstimationStarted or ScoringTaskStatusId.Approved,
+                $"Scoring task cannot be started in state {Status}");
 
-        //    EstimationStarted = time;
-        //    TaskEstimations.Clear();
-        //}
+            DomainException.ThrowIf(
+                OwnerId != userId,
+                "Only owner can start estimation");
+
+            Status = ScoringTaskStatusId.EstimationStarted;
+            EstimationStarted = time;
+            ScheduledEstimationFinish = finishTime;
+            //TaskEstimations.Clear();
+        }
+
+        public void FinishEstimation()
+        {
+            Status = ScoringTaskStatusId.EstimationFinished;
+        }
 
         //public void AppendEstimation(DateTime moment, int userId, Estimation estimation)
         //{

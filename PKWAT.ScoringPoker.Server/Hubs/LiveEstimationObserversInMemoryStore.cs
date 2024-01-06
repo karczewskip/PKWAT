@@ -33,6 +33,6 @@
         LiveEstimationObserverInfo GetObserver(string connectionId);
     }
 
-    public record LiveEstimationObserverInfo(string Name, string ConnectionId, int ScoringTaskId);
+    public record LiveEstimationObserverInfo(string UserName, string ConnectionId, int ScoringTaskId);
     
 }

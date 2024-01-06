@@ -1,22 +1,32 @@
 ﻿namespace PKWAT.ScoringPoker.Server.Hubs
 {
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Contracts.LiveEstimation;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
     using PKWAT.ScoringPoker.Server.Data;
+    using PKWAT.ScoringPoker.Server.Factories;
 
     [Authorize]
     public class LiveEstimationHub : Hub<ILiveEstimationClient>
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILiveEstimationObserversInMemoryStore _liveEstimationObserversInMemoryStore;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILiveEstimationScoringTaskStatusFactory _liveEstimationScoringTaskStatusFactory;
 
-        public LiveEstimationHub(ApplicationDbContext dbContext, ILiveEstimationObserversInMemoryStore liveEstimationObserversInMemoryStore)
+        public LiveEstimationHub(
+            ApplicationDbContext dbContext, 
+            ILiveEstimationObserversInMemoryStore liveEstimationObserversInMemoryStore,
+            UserManager<ApplicationUser> userManager,
+            ILiveEstimationScoringTaskStatusFactory liveEstimationScoringTaskStatusFactory)
         {
             _dbContext = dbContext;
             _liveEstimationObserversInMemoryStore = liveEstimationObserversInMemoryStore;
+            _userManager = userManager;
+            _liveEstimationScoringTaskStatusFactory = liveEstimationScoringTaskStatusFactory;
         }
 
         public override async Task OnConnectedAsync()
@@ -34,7 +44,7 @@
             {
                 await Clients
                     .Group(observer.ScoringTaskId.ToString())
-                    .ReceiveNotification($"{observer.Name} left task {observer.ScoringTaskId}");
+                    .ReceiveNotification($"{observer.UserName} left task {observer.ScoringTaskId}");
 
                 _liveEstimationObserversInMemoryStore.RemoveObserver(Context.ConnectionId);
 
@@ -57,17 +67,39 @@
             await SendInfoForAllObservers(scoringTaskId);
         }
 
+        public async Task StartEstimating()
+        {
+            var observer = _liveEstimationObserversInMemoryStore.GetObserver(Context.ConnectionId);
+            if (observer is null)
+            {
+                return;
+            }
+
+            var scoringTask = await _dbContext.ScoringTasks.FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
+            if (scoringTask is null)
+            {
+                return;
+            }
+
+            var user = await _userManager.FindByNameAsync(Context.User?.Identity?.Name);
+            if (user is null)
+            {
+                return;
+            }
+
+            var time = DateTime.Now;
+            scoringTask.StartEstimation(user.Id, time, time.AddMinutes(5));
+
+            await _dbContext.SaveChangesAsync();
+
+            await SendInfoForAllObservers(observer.ScoringTaskId);
+        }
+
         private async Task SendInfoForAllObservers(int scoringTaskId)
         {
-            var scoringTask = await _dbContext.ScoringTasks.AsNoTracking().FirstOrDefaultAsync(x => x.Id == scoringTaskId);
+            var statusDto = await _liveEstimationScoringTaskStatusFactory.GenerateStatusDtoForScoringTask(scoringTaskId);
 
-            await Clients.Group(scoringTaskId.ToString()).ReceiveScoringTaskStatus(new LiveEstimationScoringTaskStatusDto
-            {
-                ScoringTaskName = scoringTask.Name.Name,
-                ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
-                ScoringTaskObservers = _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId).Select(x => x.Name).ToArray()
-            });
-
+            await Clients.Group(scoringTaskId.ToString()).ReceiveScoringTaskStatus(statusDto);
         }
     }
 
