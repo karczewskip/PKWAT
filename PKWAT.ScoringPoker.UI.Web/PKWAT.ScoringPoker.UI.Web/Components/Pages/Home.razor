@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using PKWAT.ScoringPoker.Contracts.EstimationMethods
 @using PKWAT.ScoringPoker.Contracts.ScoringTasks
 @using System.Text.Json
 
@@ -9,7 +10,7 @@
 <h1>All tasks to estimate</h1>
 
 <ul class="list-group">
-    @foreach (var task in tasks)
+    @foreach (var task in ScoringTasks)
     {
         <li class="list-group-item d-flex justify-content-between align-items-center">
             <a class="alert-link" href="scoringTasks/@task.Id">
@@ -31,6 +32,15 @@
                 <InputText Id="name" Class="form-control" @bind-Value="CreateScoringTaskRequest.Name" />
                 <ValidationMessage For="@(() => CreateScoringTaskRequest.Name)" />
             </div>
+            <div class="form-group">
+                <label for="estimation-method">Estimation method</label>
+                <select class="form-control" id="estimation-method" @bind="CreateScoringTaskRequest.EstimationMethodId">
+                    @foreach (var estimationMethod in EstimationMethods)
+                    {
+                        <option value="@estimationMethod.Id">@estimationMethod.Name</option>
+                    }
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -40,12 +50,18 @@
     [SupplyParameterFromForm]
     private CreateScoringTaskRequest CreateScoringTaskRequest { get; set; } = new();
 
-    private List<ScoringTaskDto> tasks = new();
+    private List<ScoringTaskDto> ScoringTasks = new();
+    private List<EstimationMethodDto> EstimationMethods = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
-        tasks.AddRange(response.ScoringTasks);
+        var scoringTasksResponse = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
+        ScoringTasks.AddRange(scoringTasksResponse.ScoringTasks);
+
+        var estimationMethodsResponse = await HttpClient.GetFromJsonAsync<GetEstimationMethodsResponse>("api/EstimationMethods");
+        EstimationMethods.AddRange(estimationMethodsResponse.EstimationMethods);
+
+        CreateScoringTaskRequest.EstimationMethodId = EstimationMethods.First().Id;
     }
 
     private async Task HandleCreateScoringTask()
@@ -54,7 +70,7 @@
         if (response.IsSuccessStatusCode)
         {
             var createResponse = JsonSerializer.Deserialize<CreateScoringTaskResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            tasks.Add(createResponse.ScoringTask);
+            ScoringTasks.Add(createResponse.ScoringTask);
         }
     }
 
@@ -63,7 +79,7 @@
         var response = await HttpClient.DeleteAsync($"api/ScoringTasks/{scoringTask.Id}");
         if (response.IsSuccessStatusCode)
         {
-            tasks.Remove(scoringTask);
+            ScoringTasks.Remove(scoringTask);
         }
     }
 }

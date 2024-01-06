@@ -65,7 +65,7 @@
                 {
                     Id = entry.Entity.Id,
                     Name = entry.Entity.Name.Name,
-                    EstimationMethod = entry.Entity.EstimationMethod.Name.Value
+                    EstimationMethod = estimationMethod.Name.Value
                 }
             });
         }
