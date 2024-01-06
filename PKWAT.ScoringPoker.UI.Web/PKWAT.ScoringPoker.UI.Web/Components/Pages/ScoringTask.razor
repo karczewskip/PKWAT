@@ -19,6 +19,8 @@
 
 <h2>Current status: @StatusDto?.ScoringTaskStatus</h2>
 
+<button type="button" class="btn btn-light" @onclick="@(e => HandleStart())">Start</button>
+
 Observers:
 
 <ul>
@@ -71,6 +73,11 @@ Messages from the server:
         await hubConnection.StartAsync();
 
         await hubConnection.SendAsync("ObserveScoringTask", int.Parse(TaskId));
+    }
+
+    private async Task HandleStart()
+    {
+        await hubConnection!.SendAsync("StartEstimating");
     }
 
     public async ValueTask DisposeAsync()

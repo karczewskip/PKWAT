@@ -88,7 +88,7 @@
             }
 
             var time = DateTime.Now;
-            scoringTask.StartEstimation(user.Id, time, time.AddMinutes(5));
+            scoringTask.StartEstimation(user.Id, time, time.AddSeconds(10));
 
             await _dbContext.SaveChangesAsync();
 
