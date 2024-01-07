@@ -6,9 +6,11 @@
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.Entities;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
+    using Microsoft.AspNetCore.Authorization;
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EstimationMethodsController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
