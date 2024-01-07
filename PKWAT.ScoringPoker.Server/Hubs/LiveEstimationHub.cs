@@ -130,6 +130,39 @@
             await SendInfoForAllObservers(observer.ScoringTaskId);
         }
 
+        public async Task Estimate(int optionId)
+        {
+            var observer = _liveEstimationObserversInMemoryStore.GetObserver(Context.ConnectionId);
+            if (observer is null)
+            {
+                return;
+            }
+
+            var scoringTask = await _dbContext.ScoringTasks.Include(x => x.EstimationMethod).ThenInclude(x => x.PossibleValues).Include(x => x.UserEstimations).FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
+            if (scoringTask is null)
+            {
+                return;
+            }
+
+            var user = await _userManager.FindByNameAsync(Context.User?.Identity?.Name);
+            if (user is null)
+            {
+                return;
+            }
+
+            var value = scoringTask.EstimationMethod.PossibleValues.FirstOrDefault(x => x.Id == optionId);
+            if (value is null)
+            {
+                return;
+            }
+
+            scoringTask.Approve(user.Id, scoringTask.EstimationMethodId, EstimationMethodValue.Create(value.EstimationMethodValue.Value));
+
+            await _dbContext.SaveChangesAsync();
+
+            await SendInfoForAllObservers(observer.ScoringTaskId);
+        }
+
         private async Task SendInfoForAllObservers(int scoringTaskId)
         {
             var statusDto = await _liveEstimationScoringTaskStatusFactory.GenerateStatusDtoForScoringTask(scoringTaskId);

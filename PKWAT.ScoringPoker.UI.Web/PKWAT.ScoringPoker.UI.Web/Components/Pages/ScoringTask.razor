@@ -15,9 +15,15 @@
 
 <PageTitle>ScoringTask</PageTitle>
 
-<h1>Test Scoring task @StatusDto?.ScoringTaskName</h1>
+@if(StatusDto is null)
+{
+    <h1>Scoring task not found</h1>
+    return;
+})
 
-<h2>Current status: @StatusDto?.ScoringTaskStatus</h2>
+<h1>Test Scoring task @StatusDto.ScoringTaskName</h1>
+
+<h2>Current status: @StatusDto.ScoringTaskStatus</h2>
 
 @if(StatusDto?.CanBeStarted ?? false)
 {
@@ -32,6 +38,11 @@
     {
         <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-info")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
     }
+}
+
+@if(StatusDto?.CanShowFinalEstimationValue ?? false)
+{
+    <h2>Final estimation value: @StatusDto?.ScoringTaskFinalValue</h2>
 }
 
 <br/>

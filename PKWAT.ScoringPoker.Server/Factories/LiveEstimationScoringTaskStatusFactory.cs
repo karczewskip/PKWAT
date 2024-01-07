@@ -52,11 +52,12 @@
                 ScoringTaskEstimationMethodPossibleValues = scoringTask
                     .EstimationMethod
                     .PossibleValues
-                    .Select(x => new LiveEstimationScoringTaskEstimationMethodPossibleValueDto() 
+                    .Select(x => new LiveEstimationScoringTaskEstimationMethodPossibleValueDto()
                     {
                         Id = x.Id,
                         Name = x.EstimationMethodValue.Value
                     }).ToArray(),
+                ScoringTaskFinalValue = scoringTask.FinalEstimationValue.Value,
                 UsersEstimations =
                     _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId)
                         .Select(x => new LiveEstimationUserEstimationDto() 
@@ -67,7 +68,9 @@
                         .ToArray(),
                 CanBeStarted = scoringTask.CanBeStarted(),
                 CanAppendUserEstimation = scoringTask.CanAppendUserEstimation(),
-                CanShowUserEstimationValues = scoringTask.CanShowUserEstimationValues()
+                CanShowUserEstimationValues = scoringTask.CanShowUserEstimationValues(),
+                CanBeApprovedByOwner = scoringTask.CanBeApprovedByOwner(),
+                CanShowFinalEstimationValue = scoringTask.CanShowFinalEstimationValue()
             };
 
             return statusDto;

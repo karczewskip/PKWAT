@@ -30,7 +30,9 @@
 
         public ICollection<UserEstimation> UserEstimations { get; protected set; }
 
-        //public Estimation? FinalEstimation { get; protected set; }
+        public EstimationMethodName? FinalEstimationMethodName { get; protected set; }
+
+        public EstimationMethodValue? FinalEstimationValue { get; protected set; }
 
         public static ScoringTask CreateNew(ScoringTaskName name, int estimationMethodId, int ownerId)
         {
@@ -41,7 +43,6 @@
                 EstimationMethodId = estimationMethodId,
                 OwnerId = ownerId,
                 UserEstimations = new List<UserEstimation>(),
-                //FinalEstimation = null
             };
         }
 
@@ -104,14 +105,34 @@
             UserEstimations.Add(UserEstimation.CreateNew(userId, Id, EstimationMethod.Name, estimationValue, moment));
         }
 
-        //public void Approve(Estimation estimation)
-        //{
-        //    DomainException.ThrowIf(
-        //        FinalEstimation != null,
-        //        "Final estimation is already set.");
+        public void Approve(int userId, int estimationMethodId, EstimationMethodValue estimation)
+        {
+            DomainException.ThrowIf(
+                OwnerId != userId,
+                "Only owner can set final estimation");
 
-        //    FinalEstimation = estimation;
-        //}
+            DomainException.ThrowIf(
+                Status is ScoringTaskStatusId.Approved,
+                "Final estimation is already set.");
+
+            DomainException.ThrowIf(
+                estimationMethodId != EstimationMethodId,
+                $"Estimation method for final estimation {estimationMethodId} is different from {EstimationMethodId}");
+
+            Status = ScoringTaskStatusId.Approved;
+            FinalEstimationMethodName = EstimationMethod.Name;
+            FinalEstimationValue = estimation;
+        }
+
+        public bool CanBeApprovedByOwner()
+        {
+            return Status is ScoringTaskStatusId.EstimationFinished;
+        }
+
+        public bool CanShowFinalEstimationValue()
+        {
+            return Status is ScoringTaskStatusId.Approved;
+        }
     }
 
     public enum ScoringTaskStatusId
