@@ -5,10 +5,9 @@
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.SignalR.Client
 @using PKWAT.ScoringPoker.Contracts.LiveEstimation
-@using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorageService
 
 @implements IAsyncDisposable
@@ -85,7 +84,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var token = await LocalStorageService.GetItemAsync<string?>("authToken");
+        var authenticatedState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authenticatedState?.User?.Identity?.IsAuthenticated is null or false)
+        {
+            NavigationManager.NavigateTo($"/login?return=scoringTasks%2F{TaskId}");
+            return;
+        }
 
         hubConnection = new HubConnectionBuilder()
             .WithUrl("https://localhost:7173/liveEstimation",

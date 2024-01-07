@@ -2,10 +2,9 @@
 
 @using PKWAT.ScoringPoker.Contracts.EstimationMethods
 @using System.Text.Json
-@using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
 
 <h3>Estimation method values for: @EstimationMethodInfo?.Name</h3>
@@ -48,6 +47,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authenticatedState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authenticatedState?.User?.Identity?.IsAuthenticated is null or false)
+        {
+            NavigationManager.NavigateTo($"/login?return=estimationMethods%2F{EstimationMethodId}");
+            return;
+        }
+
         var response = await HttpClient.GetFromJsonAsync<GetEstimationMethodWithValuesResponse>($"api/EstimationMethods/{EstimationMethodId}");
         EstimationMethodInfo = response.EstimationMethod;
         EstimationMethodValues.AddRange(response.EstimationMethodValues);

@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@using Microsoft.AspNetCore.WebUtilities
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
@@ -51,7 +52,15 @@
 
         if (result.Success)
         {
-            NavigationManager.NavigateTo("/");
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("return", out var returnUrl))
+            {
+                NavigationManager.NavigateTo($"/{returnUrl}");
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
         else
         {

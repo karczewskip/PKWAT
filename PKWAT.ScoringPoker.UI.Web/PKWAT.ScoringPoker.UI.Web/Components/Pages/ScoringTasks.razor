@@ -5,10 +5,9 @@
 @using PKWAT.ScoringPoker.Contracts.EstimationMethods
 @using PKWAT.ScoringPoker.Contracts.ScoringTasks
 @using System.Text.Json
-@using Microsoft.AspNetCore.Authorization
 
-@attribute [Authorize]
-
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
 
 <PageTitle>Tasks</PageTitle>
@@ -62,6 +61,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authenticatedState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authenticatedState?.User?.Identity?.IsAuthenticated is null or false)
+        {
+            NavigationManager.NavigateTo($"/login?return=scoringTasks");
+            return;
+        }
+
         var scoringTasksResponse = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
         ScoringTasksList.AddRange(scoringTasksResponse.ScoringTasks);
 
