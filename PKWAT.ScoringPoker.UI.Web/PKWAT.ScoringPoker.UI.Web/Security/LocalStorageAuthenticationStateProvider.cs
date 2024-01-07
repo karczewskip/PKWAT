@@ -26,9 +26,20 @@
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
+            var parsedClaimsFromJwt = ParseClaimsFromJwt(savedToken);
+
+            var expirationClaim = parsedClaimsFromJwt.FirstOrDefault(x => x.Type == "exp");
+
+            if (expirationClaim == null || DateTimeOffset.FromUnixTimeSeconds(int.Parse(expirationClaim.Value)).ToLocalTime() < DateTime.UtcNow)
+            {
+                await _localStorage.RemoveItemAsync("authToken");
+                MarkUserAsLoggedOut();
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", savedToken);
 
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(savedToken), "jwt")));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(parsedClaimsFromJwt, "jwt")));
         }
 
         public void MarkUserAsAuthenticated(string email)
