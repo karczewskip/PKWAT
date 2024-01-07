@@ -7,6 +7,7 @@
         public required string ScoringTaskOwner { get; set; }
         public required string ScoringTaskEstimationMethod { get; set; }
         public required LiveEstimationScoringTaskEstimationMethodPossibleValueDto[] ScoringTaskEstimationMethodPossibleValues { get; set; }
+        public required string? ScoringTaskFinalEstimationMethod { get; set; }
         public required string? ScoringTaskFinalValue { get; set; }
         public required LiveEstimationUserEstimationDto[] UsersEstimations { get; set; }
 

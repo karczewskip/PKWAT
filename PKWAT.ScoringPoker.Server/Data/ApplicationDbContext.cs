@@ -37,6 +37,14 @@
                 b.HasMany(x => x.UserEstimations)
                     .WithOne()
                     .HasForeignKey(x => x.ScoringTaskId);
+
+                b.Property(x => x.FinalEstimationMethodName)
+                    .HasConversion(x => x.Value, x => EstimationMethodName.Create(x))
+                    .HasMaxLength(EstimationMethodName.MaxLength);
+
+                b.Property(x => x.FinalEstimationValue)
+                    .HasConversion(x => x.Value, x => EstimationMethodValue.Create(x))
+                    .HasMaxLength(EstimationMethodValue.MaxLength);
             });
 
             builder.Entity<ScoringTaskStatus>(b =>

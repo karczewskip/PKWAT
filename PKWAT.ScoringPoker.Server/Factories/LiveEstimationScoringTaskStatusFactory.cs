@@ -57,7 +57,8 @@
                         Id = x.Id,
                         Name = x.EstimationMethodValue.Value
                     }).ToArray(),
-                ScoringTaskFinalValue = scoringTask.FinalEstimationValue.Value,
+                ScoringTaskFinalEstimationMethod = scoringTask.FinalEstimationMethodName?.Value,
+                ScoringTaskFinalValue = scoringTask.FinalEstimationValue?.Value,
                 UsersEstimations =
                     _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId)
                         .Select(x => new LiveEstimationUserEstimationDto() 

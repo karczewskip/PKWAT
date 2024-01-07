@@ -13,57 +13,64 @@
 
 @implements IAsyncDisposable
 
-<PageTitle>ScoringTask</PageTitle>
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>ScoringTask</PageTitle>
 
-@if(StatusDto is null)
-{
-    <h1>Scoring task not found</h1>
-    return;
-})
+        @if(StatusDto is null)
+        {
+            <h1>Scoring task not found</h1>
+            return;
+        }
 
-<h1>Test Scoring task @StatusDto.ScoringTaskName</h1>
+        <h1>Test Scoring task @StatusDto.ScoringTaskName</h1>
 
-<h2>Current status: @StatusDto.ScoringTaskStatus</h2>
+        <h2>Current status: @StatusDto.ScoringTaskStatus</h2>
+        
+        @if(StatusDto.CanBeStarted && IsOwner(context?.User?.Identity?.Name))
+        {
+            <button type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start</button>
+        }
 
-@if(StatusDto?.CanBeStarted ?? false)
-{
-    <button type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start</button>
-}
+        @if (StatusDto.CanAppendUserEstimation || (StatusDto.CanBeApprovedByOwner && IsOwner(context?.User?.Identity?.Name)))
+        {
+            <h2>Possible values:</h2>
 
-@if(StatusDto?.CanAppendUserEstimation ?? false)
-{
-    <h2>Possible values:</h2>
+            @foreach (var value in StatusDto?.ScoringTaskEstimationMethodPossibleValues ?? [])
+            {
+                <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-info")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
+            }
+        }
 
-    @foreach (var value in StatusDto?.ScoringTaskEstimationMethodPossibleValues ?? [])
-    {
-        <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-info")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
-    }
-}
+        @if(StatusDto.CanShowFinalEstimationValue)
+        {
+            <h2>Final estimation value: @StatusDto?.ScoringTaskFinalValue</h2>
+        }
 
-@if(StatusDto?.CanShowFinalEstimationValue ?? false)
-{
-    <h2>Final estimation value: @StatusDto?.ScoringTaskFinalValue</h2>
-}
+        <br/>
 
-<br/>
+        Observers:
 
-Observers:
+        <ul>
+            @foreach (var observer in StatusDto?.UsersEstimations ?? [])
+            {
+                <li>@observer.UserName @(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</li>
+            }
+        </ul>
 
-<ul>
-    @foreach (var observer in StatusDto?.UsersEstimations ?? [])
-    {
-        <li>@observer.UserName @(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</li>
-    }
-</ul>
+        Messages from the server:
 
-Messages from the server:
-
-<ul>
-    @foreach (var message in messages)
-    {
-        <li>@message</li>
-    }
-</ul>
+        <ul>
+            @foreach (var message in messages)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </Authorized>
+        <NotAuthorized>
+            <h1>Not authorized</h1>
+        </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Parameter]
@@ -114,9 +121,22 @@ Messages from the server:
 
     private async Task HandleEstimate(int optionId)
     {
-        await hubConnection!.SendAsync("AppendEstimation", optionId);
+        if (StatusDto.CanBeApprovedByOwner)
+        {
+            await hubConnection!.SendAsync("Estimate", optionId);
+        }
+
+        if (StatusDto.CanAppendUserEstimation)
+        {
+            await hubConnection!.SendAsync("AppendEstimation", optionId);
+        }
 
         ChosenEstimationOptionId = optionId;
+    }
+
+    private bool IsOwner(string? userName)
+    {
+        return StatusDto is not null && StatusDto.ScoringTaskOwner == userName;
     }
 
     public async ValueTask DisposeAsync()

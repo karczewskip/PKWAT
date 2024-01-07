@@ -79,7 +79,7 @@
 
         public bool CanShowUserEstimationValues()
         {
-            return Status is ScoringTaskStatusId.EstimationFinished or ScoringTaskStatusId.Approved;
+            return Status is ScoringTaskStatusId.EstimationFinished;
         }
 
         public void AppendEstimation(DateTime moment, int userId, int estimationMethodId, EstimationMethodValue estimationValue)
