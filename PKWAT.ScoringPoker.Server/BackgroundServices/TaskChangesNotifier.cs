@@ -47,7 +47,7 @@
 
             var scoringTasksToUpdate = await dbContext.ScoringTasks.Where(x => x.Status == ScoringTaskStatusId.EstimationStarted && x.ScheduledEstimationFinish < currentTime).ToArrayAsync();
 
-            if( scoringTasksToUpdate.Any() )
+            if(scoringTasksToUpdate.Any())
             {
                 foreach (var scoringTask in scoringTasksToUpdate)
                 {
