@@ -28,7 +28,7 @@
 
         public DateTime? ScheduledEstimationFinish { get; protected set; }
 
-        public ICollection<UserEstimation> TaskEstimations { get; protected set; }
+        public ICollection<UserEstimation> UserEstimations { get; protected set; }
 
         //public Estimation? FinalEstimation { get; protected set; }
 
@@ -40,7 +40,7 @@
                 Status = ScoringTaskStatusId.Created,
                 EstimationMethodId = estimationMethodId,
                 OwnerId = ownerId,
-                TaskEstimations = new List<UserEstimation>(),
+                UserEstimations = new List<UserEstimation>(),
                 //FinalEstimation = null
             };
         }
@@ -58,7 +58,7 @@
             Status = ScoringTaskStatusId.EstimationStarted;
             EstimationStarted = time;
             ScheduledEstimationFinish = finishTime;
-            TaskEstimations.Clear();
+            UserEstimations.Clear();
         }
 
         public void FinishEstimation()
@@ -95,13 +95,13 @@
                 moment > ScheduledEstimationFinish,
                 "Estimation is too late");
 
-            var previousEstimation = TaskEstimations.FirstOrDefault(x => x.UserId == userId);
+            var previousEstimation = UserEstimations.FirstOrDefault(x => x.UserId == userId);
             if(previousEstimation is not null)
             {
-                TaskEstimations.Remove(previousEstimation);
+                UserEstimations.Remove(previousEstimation);
             }
 
-            TaskEstimations.Add(UserEstimation.CreateNew(userId, Id, estimationMethodId, estimationValue, moment));
+            UserEstimations.Add(UserEstimation.CreateNew(userId, Id, EstimationMethod.Name, estimationValue, moment));
         }
 
         //public void Approve(Estimation estimation)

@@ -8,7 +8,7 @@
     {
         public int UserId { get; protected set; }
         public int ScoringTaskId { get; protected set; }
-        public int EstimationMethodId { get; protected set; }
+        public EstimationMethodName EstimationMethodName { get; protected set; }
         public EstimationMethodValue Value { get; protected set; }
         public DateTime Moment { get; protected set; }
 
@@ -16,13 +16,13 @@
         {
         }
 
-        public static UserEstimation CreateNew(int userId, int scoringTaskId, int estimationMethodId, EstimationMethodValue estimationMethodValue, DateTime moment)
+        public static UserEstimation CreateNew(int userId, int scoringTaskId, EstimationMethodName estimationMethodName, EstimationMethodValue estimationMethodValue, DateTime moment)
         {
             return new UserEstimation()
             {
                 UserId = userId,
                 ScoringTaskId = scoringTaskId,
-                EstimationMethodId = estimationMethodId,
+                EstimationMethodName = estimationMethodName,
                 Value = estimationMethodValue,
                 Moment = moment
             };

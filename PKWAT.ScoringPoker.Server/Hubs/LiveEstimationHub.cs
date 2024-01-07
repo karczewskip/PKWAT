@@ -105,7 +105,7 @@
                 return;
             }
 
-            var scoringTask = await _dbContext.ScoringTasks.Include(x => x.EstimationMethod).ThenInclude(x => x.PossibleValues).Include(x => x.TaskEstimations).FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
+            var scoringTask = await _dbContext.ScoringTasks.Include(x => x.EstimationMethod).ThenInclude(x => x.PossibleValues).Include(x => x.UserEstimations).FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
             if (scoringTask is null)
             {
                 return;

@@ -55,7 +55,7 @@
                         Id = x.Id,
                         Name = x.EstimationMethodValue.Value
                     }).ToArray(),
-                UsersEstimations = scoringTask.TaskEstimations.Select(x => new LiveEstimationUserEstimationDto() { UserName = _liveEstimationObserversInMemoryStore.GetObserverByUserId(x.UserId).UserName, UserEstimation = scoringTask.CanShowUserEstimationValues() ? x.Value.Value : null }).ToArray(),
+                UsersEstimations = scoringTask.UserEstimations.Select(x => new LiveEstimationUserEstimationDto() { UserName = _liveEstimationObserversInMemoryStore.GetObserverByUserId(x.UserId).UserName, UserEstimation = scoringTask.CanShowUserEstimationValues() ? x.Value.Value : null }).ToArray(),
                 CanBeStarted = scoringTask.CanBeStarted(),
                 CanAppendUserEstimation = scoringTask.CanAppendUserEstimation(),
                 CanShowUserEstimationValues = scoringTask.CanShowUserEstimationValues()

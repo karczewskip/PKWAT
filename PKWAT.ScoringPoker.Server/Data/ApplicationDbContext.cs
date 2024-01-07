@@ -14,6 +14,7 @@
         public DbSet<ScoringTask> ScoringTasks { get; set; }
         public DbSet<ScoringTaskStatus> ScoringTaskStatuses { get; set; }
         public DbSet<EstimationMethod> EstimationMethods { get; set; }
+        public DbSet<UserEstimation> UserEstimations { get; set; }
         public DbSet<EstimationMethodPossibleValue> EstimationMethodPossibleValues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -32,6 +33,10 @@
                     .WithMany()
                     .HasForeignKey(x => x.EstimationMethodId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                b.HasMany(x => x.UserEstimations)
+                    .WithOne()
+                    .HasForeignKey(x => x.ScoringTaskId);
             });
 
             builder.Entity<ScoringTaskStatus>(b =>
@@ -60,6 +65,19 @@
                 b.Property(x => x.Name)
                     .HasConversion(x => x.Value, x => EstimationMethodName.Create(x))
                     .HasMaxLength(EstimationMethodName.MaxLength);
+            });
+
+            builder.Entity<UserEstimation>(b =>
+            {
+                b.HasKey(x => x.Id);
+
+                b.Property(x => x.EstimationMethodName)
+                    .HasConversion(x => x.Value, x => EstimationMethodName.Create(x))
+                    .HasMaxLength(EstimationMethodName.MaxLength);
+
+                b.Property(x => x.Value)
+                    .HasConversion(x => x.Value, x => EstimationMethodValue.Create(x))
+                    .HasMaxLength(EstimationMethodValue.MaxLength);
             });
 
             builder.Entity<EstimationMethodPossibleValue>(b =>
