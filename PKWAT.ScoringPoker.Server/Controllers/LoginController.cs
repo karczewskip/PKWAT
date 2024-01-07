@@ -41,7 +41,7 @@
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSecurityKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-            var expiry = DateTime.Now.AddDays(Convert.ToInt32(_configuration["JwtExpireInDays"]));
+            var expiry = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtExpireInDays"]));
 
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],

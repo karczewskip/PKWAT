@@ -30,7 +30,7 @@
 
             var expirationClaim = parsedClaimsFromJwt.FirstOrDefault(x => x.Type == "exp");
 
-            if (expirationClaim == null || DateTimeOffset.FromUnixTimeSeconds(int.Parse(expirationClaim.Value)).ToLocalTime() < DateTime.UtcNow)
+            if (expirationClaim == null || DateTimeOffset.FromUnixTimeSeconds(int.Parse(expirationClaim.Value)).ToUniversalTime() < DateTime.UtcNow)
             {
                 await _localStorage.RemoveItemAsync("authToken");
                 MarkUserAsLoggedOut();
