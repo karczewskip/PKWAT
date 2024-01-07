@@ -8,6 +8,7 @@
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
     using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
     using PKWAT.ScoringPoker.Server.Data;
+    using PKWAT.ScoringPoker.Server.Extensions;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -34,12 +35,7 @@
 
             return Ok(new GetScoringTasksResponse
             {
-                ScoringTasks = scoringTasks.Select(x => new ScoringTaskDto
-                {
-                    Id = x.Id,
-                    Name = x.Name.Name,
-                    EstimationMethod = x.EstimationMethod.Name.Value
-                })
+                ScoringTasks = scoringTasks.Select(x => x.ToDto())
             });
         }
 
@@ -73,12 +69,7 @@
 
             return Ok(new CreateScoringTaskResponse
             {
-                ScoringTask = new ScoringTaskDto
-                {
-                    Id = entry.Entity.Id,
-                    Name = entry.Entity.Name.Name,
-                    EstimationMethod = estimationMethod.Name.Value
-                }
+                ScoringTask = entry.Entity.ToDto()
             });
         }
 

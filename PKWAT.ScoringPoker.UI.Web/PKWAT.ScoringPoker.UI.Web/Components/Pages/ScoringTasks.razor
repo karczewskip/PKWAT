@@ -1,4 +1,7 @@
 ﻿@page "/scoringTasks"
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
 @using PKWAT.ScoringPoker.Contracts.EstimationMethods
 @using PKWAT.ScoringPoker.Contracts.ScoringTasks
 @using System.Text.Json
@@ -8,18 +11,19 @@
 
 @inject HttpClient HttpClient
 
-<PageTitle>Tasks to estimate</PageTitle>
+<PageTitle>Tasks</PageTitle>
 
-<h1>All tasks to estimate</h1>
+<h1>All tasks</h1>
 
 <ul class="list-group">
     @foreach (var task in ScoringTasksList)
     {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item d-flex justify-content-between align-items-start">
             <a class="alert-link" href="scoringTasks/@task.Id">
                 @task.Name
             </a>
-            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteScoringTask(task))">Delete</button>
+            <span class="badge @GetBadgeColor(task.Status) ms-2 me-auto">@GetStatusText(task.Status)</span>
+            <button type="button" class="btn btn-danger ml-auto" @onclick="@(e => HandleDeleteScoringTask(task))">Delete</button>
         </li>
     }
 </ul>
@@ -84,5 +88,29 @@
         {
             ScoringTasksList.Remove(scoringTask);
         }
+    }
+
+    private string GetBadgeColor(ScoringTaskStatusDto status)
+    {
+        return status switch
+        {
+            ScoringTaskStatusDto.Created => "text-bg-primary",
+            ScoringTaskStatusDto.EstimationStarted => "text-bg-warning",
+            ScoringTaskStatusDto.EstimationFinished => "text-bg-danger",
+            ScoringTaskStatusDto.Approved => "text-bg-success",
+            _ => "text-bg-secondary"
+        };
+    }
+
+    private string GetStatusText(ScoringTaskStatusDto status)
+    {
+        return status switch
+        {
+            ScoringTaskStatusDto.Created => "Created",
+            ScoringTaskStatusDto.EstimationStarted => "Estimation started",
+            ScoringTaskStatusDto.EstimationFinished => "Estimation finished",
+            ScoringTaskStatusDto.Approved => "Approved",
+            _ => "Unknown"
+        };
     }
 }

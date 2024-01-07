@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthentication();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, LocalStorageAuthenticationStateProvider>();
 builder.Services.AddScoped<IAuthService, AuthService>();
