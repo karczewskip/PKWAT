@@ -30,6 +30,7 @@
                 .ScoringTasks
                 .Include(x => x.EstimationMethod)
                 .ThenInclude(x => x.PossibleValues)
+                .Include(x => x.UserEstimations)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == scoringTaskId);
 
@@ -40,11 +41,12 @@
 
             var owner = await _dbContext.Users.Where(x => x.Id == scoringTask.OwnerId).Select(x => x.UserName).FirstOrDefaultAsync();
 
+            var userEstimations = scoringTask.UserEstimations.ToDictionary(x => x.UserId, x => x.Value.Value);
+
             var statusDto = new LiveEstimationScoringTaskStatusDto
             {
                 ScoringTaskName = scoringTask.Name.Name,
                 ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
-                ScoringTaskObservers = _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId).Select(x => x.UserName).ToArray(),
                 ScoringTaskOwner = owner,
                 ScoringTaskEstimationMethod = scoringTask.EstimationMethod.Name.Value,
                 ScoringTaskEstimationMethodPossibleValues = scoringTask
@@ -55,7 +57,14 @@
                         Id = x.Id,
                         Name = x.EstimationMethodValue.Value
                     }).ToArray(),
-                UsersEstimations = scoringTask.UserEstimations.Select(x => new LiveEstimationUserEstimationDto() { UserName = _liveEstimationObserversInMemoryStore.GetObserverByUserId(x.UserId).UserName, UserEstimation = scoringTask.CanShowUserEstimationValues() ? x.Value.Value : null }).ToArray(),
+                UsersEstimations =
+                    _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId)
+                        .Select(x => new LiveEstimationUserEstimationDto() 
+                        { 
+                            UserName = x.UserName,
+                            EstimationAdded = userEstimations.ContainsKey(x.UserId),
+                            UserEstimation = (scoringTask.CanShowUserEstimationValues() && userEstimations.ContainsKey(x.UserId)) ? userEstimations[x.UserId] : null })
+                        .ToArray(),
                 CanBeStarted = scoringTask.CanBeStarted(),
                 CanAppendUserEstimation = scoringTask.CanAppendUserEstimation(),
                 CanShowUserEstimationValues = scoringTask.CanShowUserEstimationValues()

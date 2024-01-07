@@ -39,9 +39,9 @@
 Observers:
 
 <ul>
-    @foreach (var observer in StatusDto?.ScoringTaskObservers ?? [])
+    @foreach (var observer in StatusDto?.UsersEstimations ?? [])
     {
-        <li>@observer</li>
+        <li>@observer.UserName @(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</li>
     }
 </ul>
 
@@ -84,6 +84,10 @@ Messages from the server:
         hubConnection.On<LiveEstimationScoringTaskStatusDto>("ReceiveScoringTaskStatus", statusDto =>
         {
             StatusDto = statusDto;
+            if (!statusDto.CanAppendUserEstimation)
+            {
+                ChosenEstimationOptionId = null;
+            }
             InvokeAsync(StateHasChanged);
         });
 
@@ -99,6 +103,8 @@ Messages from the server:
 
     private async Task HandleEstimate(int optionId)
     {
+        await hubConnection!.SendAsync("AppendEstimation", optionId);
+
         ChosenEstimationOptionId = optionId;
     }
 

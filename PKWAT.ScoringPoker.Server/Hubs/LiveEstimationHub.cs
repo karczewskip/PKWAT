@@ -6,10 +6,9 @@
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Contracts.LiveEstimation;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
-    using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
-    using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
     using PKWAT.ScoringPoker.Server.Data;
     using PKWAT.ScoringPoker.Server.Factories;
+    using System.Security.Claims;
 
     [Authorize]
     public class LiveEstimationHub : Hub<ILiveEstimationClient>
@@ -60,7 +59,7 @@
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, scoringTaskId.ToString());
 
-            _liveEstimationObserversInMemoryStore.AddObserver(new LiveEstimationObserverInfo(0 ,Context.User?.Identity?.Name, Context.ConnectionId, scoringTaskId));
+            _liveEstimationObserversInMemoryStore.AddObserver(new LiveEstimationObserverInfo(int.Parse(Context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value), Context.User?.Identity?.Name, Context.ConnectionId, scoringTaskId));
 
             await Clients
                 .Group(scoringTaskId.ToString())
@@ -77,7 +76,7 @@
                 return;
             }
 
-            var scoringTask = await _dbContext.ScoringTasks.FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
+            var scoringTask = await _dbContext.ScoringTasks.Include(x => x.UserEstimations).FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
             if (scoringTask is null)
             {
                 return;
