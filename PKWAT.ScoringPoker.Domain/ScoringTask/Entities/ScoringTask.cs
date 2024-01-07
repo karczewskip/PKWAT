@@ -2,6 +2,7 @@
 {
     using PKWAT.ScoringPoker.Domain.Abstraction;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.Entities;
+    using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
     using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
     using System;
     using System.Collections.Generic;
@@ -27,7 +28,7 @@
 
         public DateTime? ScheduledEstimationFinish { get; protected set; }
 
-        //public ICollection<UserEstimation> TaskEstimations { get; protected set; }
+        public ICollection<UserEstimation> TaskEstimations { get; protected set; }
 
         //public Estimation? FinalEstimation { get; protected set; }
 
@@ -39,8 +40,7 @@
                 Status = ScoringTaskStatusId.Created,
                 EstimationMethodId = estimationMethodId,
                 OwnerId = ownerId,
-                //TaskEstimations = new List<UserEstimation>(),
-                //EstimationStarted = null,
+                TaskEstimations = new List<UserEstimation>(),
                 //FinalEstimation = null
             };
         }
@@ -58,7 +58,7 @@
             Status = ScoringTaskStatusId.EstimationStarted;
             EstimationStarted = time;
             ScheduledEstimationFinish = finishTime;
-            //TaskEstimations.Clear();
+            TaskEstimations.Clear();
         }
 
         public void FinishEstimation()
@@ -73,25 +73,36 @@
 
         public bool CanAppendUserEstimation()
         {
-            return Status == ScoringTaskStatusId.EstimationStarted;
+            return Status is ScoringTaskStatusId.EstimationStarted;
         }
 
-        //public void AppendEstimation(DateTime moment, int userId, Estimation estimation)
-        //{
-        //    DomainException.ThrowIf(
-        //        GetStatus(moment) != ScoringTaskStatus.EstimationStarted,
-        //        "Scoring task is not in estimation started state");
+        public bool CanShowUserEstimationValues()
+        {
+            return Status is ScoringTaskStatusId.EstimationFinished or ScoringTaskStatusId.Approved;
+        }
 
-        //    DomainException.ThrowIf(
-        //        TaskEstimations.Any(e => e.Id.UserId == userId),
-        //        "User already estimated");
+        public void AppendEstimation(DateTime moment, int userId, int estimationMethodId, EstimationMethodValue estimationValue)
+        {
+            DomainException.ThrowIf(
+                Status is not ScoringTaskStatusId.EstimationStarted,
+                "Scoring task is not in estimation started state");
 
-        //    DomainException.ThrowIf(
-        //        estimation.MethodKey != EstimationMethodKey,
-        //        $"Estimation method for user estimation {estimation.MethodKey} is different from {EstimationMethodKey}");
+            DomainException.ThrowIf(
+                estimationMethodId != EstimationMethodId,
+                $"Estimation method for user estimation {estimationMethodId} is different from {EstimationMethodId}");
 
-        //    TaskEstimations.Add(UserEstimation.CreateNew(UserEstimationKey.Create(userId, Id),estimation, moment));
-        //}
+            DomainException.ThrowIf(
+                moment > ScheduledEstimationFinish,
+                "Estimation is too late");
+
+            var previousEstimation = TaskEstimations.FirstOrDefault(x => x.UserId == userId);
+            if(previousEstimation is not null)
+            {
+                TaskEstimations.Remove(previousEstimation);
+            }
+
+            TaskEstimations.Add(UserEstimation.CreateNew(userId, Id, estimationMethodId, estimationValue, moment));
+        }
 
         //public void Approve(Estimation estimation)
         //{

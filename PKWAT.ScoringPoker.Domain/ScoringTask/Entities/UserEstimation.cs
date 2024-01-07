@@ -1,49 +1,31 @@
 ﻿namespace PKWAT.ScoringPoker.Domain.ScoringTask.Entities
 {
     using PKWAT.ScoringPoker.Domain.Abstraction;
-    using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
+    using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
     using System;
 
-    public class UserEstimation : Entity<UserEstimationKey>
+    public class UserEstimation : Entity<int>
     {
-        public Estimation Estimation { get; protected set; }
+        public int UserId { get; protected set; }
+        public int ScoringTaskId { get; protected set; }
+        public int EstimationMethodId { get; protected set; }
+        public EstimationMethodValue Value { get; protected set; }
         public DateTime Moment { get; protected set; }
 
         protected UserEstimation()
         {
         }
 
-        public static UserEstimation CreateNew(UserEstimationKey key, Estimation estimation, DateTime moment)
+        public static UserEstimation CreateNew(int userId, int scoringTaskId, int estimationMethodId, EstimationMethodValue estimationMethodValue, DateTime moment)
         {
             return new UserEstimation()
             {
-                Id = key,
-                Estimation = estimation,
+                UserId = userId,
+                ScoringTaskId = scoringTaskId,
+                EstimationMethodId = estimationMethodId,
+                Value = estimationMethodValue,
                 Moment = moment
             };
-        }
-    }
-
-    public class UserEstimationKey : ValueObject
-    {
-        public int UserId { get; protected set; }
-        public int ScoringTaskId { get; protected set; }
-
-        private UserEstimationKey() { }
-
-        public static UserEstimationKey Create(int userId, int scoringTaskId)
-        {
-            return new UserEstimationKey()
-            {
-                UserId = userId,
-                ScoringTaskId = scoringTaskId
-            };
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return UserId;
-            yield return ScoringTaskId;
         }
     }
 }

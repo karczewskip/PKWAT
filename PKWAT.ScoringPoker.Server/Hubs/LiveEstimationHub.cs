@@ -5,7 +5,9 @@
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.EntityFrameworkCore;
     using PKWAT.ScoringPoker.Contracts.LiveEstimation;
+    using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
+    using PKWAT.ScoringPoker.Domain.ScoringTask.ValueObjects;
     using PKWAT.ScoringPoker.Server.Data;
     using PKWAT.ScoringPoker.Server.Factories;
 
@@ -58,7 +60,7 @@
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, scoringTaskId.ToString());
 
-            _liveEstimationObserversInMemoryStore.AddObserver(new LiveEstimationObserverInfo(Context.User?.Identity?.Name, Context.ConnectionId, scoringTaskId));
+            _liveEstimationObserversInMemoryStore.AddObserver(new LiveEstimationObserverInfo(0 ,Context.User?.Identity?.Name, Context.ConnectionId, scoringTaskId));
 
             await Clients
                 .Group(scoringTaskId.ToString())
@@ -89,6 +91,40 @@
 
             var time = DateTime.Now;
             scoringTask.StartEstimation(user.Id, time, time.AddSeconds(10));
+
+            await _dbContext.SaveChangesAsync();
+
+            await SendInfoForAllObservers(observer.ScoringTaskId);
+        }
+
+        public async Task AppendEstimation(int optionId)
+        {
+            var observer = _liveEstimationObserversInMemoryStore.GetObserver(Context.ConnectionId);
+            if (observer is null)
+            {
+                return;
+            }
+
+            var scoringTask = await _dbContext.ScoringTasks.Include(x => x.EstimationMethod).ThenInclude(x => x.PossibleValues).Include(x => x.TaskEstimations).FirstOrDefaultAsync(x => x.Id == observer.ScoringTaskId);
+            if (scoringTask is null)
+            {
+                return;
+            }
+
+            var user = await _userManager.FindByNameAsync(Context.User?.Identity?.Name);
+            if (user is null)
+            {
+                return;
+            }
+
+            var value = scoringTask.EstimationMethod.PossibleValues.FirstOrDefault(x => x.Id == optionId);
+            if(value is null)
+            {
+                return;
+            }
+
+            var time = DateTime.Now;
+            scoringTask.AppendEstimation(time, user.Id, scoringTask.EstimationMethodId, EstimationMethodValue.Create(value.EstimationMethodValue.Value));
 
             await _dbContext.SaveChangesAsync();
 

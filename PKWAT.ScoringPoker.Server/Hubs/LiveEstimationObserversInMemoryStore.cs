@@ -14,6 +14,11 @@
             return _observers.FirstOrDefault(x => x.ConnectionId == connectionId);
         }
 
+        public LiveEstimationObserverInfo GetObserverByUserId(int userId)
+        {
+            return _observers.FirstOrDefault(x => x.UserId == userId);
+        }
+
         public IEnumerable<LiveEstimationObserverInfo> GetObservers(int scoringTaskId)
         {
             return _observers.Where(x => x.ScoringTaskId == scoringTaskId);
@@ -31,8 +36,10 @@
         void RemoveObserver(string connectionId);
         IEnumerable<LiveEstimationObserverInfo> GetObservers(int scoringTaskId);
         LiveEstimationObserverInfo GetObserver(string connectionId);
+        LiveEstimationObserverInfo GetObserverByUserId(int userId);
+
     }
 
-    public record LiveEstimationObserverInfo(string UserName, string ConnectionId, int ScoringTaskId);
+    public record LiveEstimationObserverInfo(int UserId, string UserName, string ConnectionId, int ScoringTaskId);
     
 }

@@ -33,6 +33,11 @@
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == scoringTaskId);
 
+            if(scoringTask is null)
+            {
+                throw new ArgumentException($"Scoring task with id {scoringTaskId} not exists.");
+            }
+
             var owner = await _dbContext.Users.Where(x => x.Id == scoringTask.OwnerId).Select(x => x.UserName).FirstOrDefaultAsync();
 
             var statusDto = new LiveEstimationScoringTaskStatusDto
@@ -50,8 +55,10 @@
                         Id = x.Id,
                         Name = x.EstimationMethodValue.Value
                     }).ToArray(),
+                UsersEstimations = scoringTask.TaskEstimations.Select(x => new LiveEstimationUserEstimationDto() { UserName = _liveEstimationObserversInMemoryStore.GetObserverByUserId(x.UserId).UserName, UserEstimation = scoringTask.CanShowUserEstimationValues() ? x.Value.Value : null }).ToArray(),
                 CanBeStarted = scoringTask.CanBeStarted(),
-                CanAppendUserEstimation = scoringTask.CanAppendUserEstimation()
+                CanAppendUserEstimation = scoringTask.CanAppendUserEstimation(),
+                CanShowUserEstimationValues = scoringTask.CanShowUserEstimationValues()
             };
 
             return statusDto;
