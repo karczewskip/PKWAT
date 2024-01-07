@@ -1,85 +1,13 @@
 ﻿@page "/"
-@using PKWAT.ScoringPoker.Contracts.EstimationMethods
-@using PKWAT.ScoringPoker.Contracts.ScoringTasks
-@using System.Text.Json
 
-@inject HttpClient HttpClient
+<h1>Welcome!</h1>
 
-<PageTitle>Tasks to estimate</PageTitle>
+<p>Scoring Poker is a tool for estimating tasks in a team. It is based on the <a href="https://en.wikipedia.org/wiki/Planning_poker">Planning Poker</a> technique.</p>
 
-<h1>All tasks to estimate</h1>
+<p>It is a simple tool that allows you to estimate tasks together with your team.</p>
 
-<ul class="list-group">
-    @foreach (var task in ScoringTasks)
-    {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a class="alert-link" href="scoringTasks/@task.Id">
-                @task.Name
-            </a>
-            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteScoringTask(task))">Delete</button>
-        </li>
-    }
-</ul>
-
-<div class="card">
-    <div class="card-body">
-        <EditForm Model="CreateScoringTaskRequest" OnValidSubmit="HandleCreateScoringTask" FormName="CreateScoringTask">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="form-group">
-                <label for="name">Name</label>
-                <InputText Id="name" Class="form-control" @bind-Value="CreateScoringTaskRequest.Name" />
-                <ValidationMessage For="@(() => CreateScoringTaskRequest.Name)" />
-            </div>
-            <div class="form-group">
-                <label for="estimation-method">Estimation method</label>
-                <select class="form-control" id="estimation-method" @bind="CreateScoringTaskRequest.EstimationMethodId">
-                    @foreach (var estimationMethod in EstimationMethods)
-                    {
-                        <option value="@estimationMethod.Id">@estimationMethod.Name</option>
-                    }
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
-    </div>
-</div>
+<p>It is a web application, so you can use it on any device with a web browser.</p>
 
 @code {
-    [SupplyParameterFromForm]
-    private CreateScoringTaskRequest CreateScoringTaskRequest { get; set; } = new();
 
-    private List<ScoringTaskDto> ScoringTasks = new();
-    private List<EstimationMethodDto> EstimationMethods = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        var scoringTasksResponse = await HttpClient.GetFromJsonAsync<GetScoringTasksResponse>("api/ScoringTasks");
-        ScoringTasks.AddRange(scoringTasksResponse.ScoringTasks);
-
-        var estimationMethodsResponse = await HttpClient.GetFromJsonAsync<GetEstimationMethodsResponse>("api/EstimationMethods");
-        EstimationMethods.AddRange(estimationMethodsResponse.EstimationMethods);
-
-        CreateScoringTaskRequest.EstimationMethodId = EstimationMethods.First().Id;
-    }
-
-    private async Task HandleCreateScoringTask()
-    {
-        var response = await HttpClient.PostAsJsonAsync("api/ScoringTasks", CreateScoringTaskRequest);
-        if (response.IsSuccessStatusCode)
-        {
-            var createResponse = JsonSerializer.Deserialize<CreateScoringTaskResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            ScoringTasks.Add(createResponse.ScoringTask);
-        }
-    }
-
-    private async Task HandleDeleteScoringTask(ScoringTaskDto scoringTask)
-    {
-        var response = await HttpClient.DeleteAsync($"api/ScoringTasks/{scoringTask.Id}");
-        if (response.IsSuccessStatusCode)
-        {
-            ScoringTasks.Remove(scoringTask);
-        }
-    }
 }
