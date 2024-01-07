@@ -1,8 +1,6 @@
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using PKWAT.ScoringPoker.UI.Web.Client.Pages;
 using PKWAT.ScoringPoker.UI.Web.Security;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using PKWAT.ScoringPoker.UI.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,7 +37,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(Counter).Assembly);
+    .AddInteractiveWebAssemblyRenderMode();
 
 app.Run();
