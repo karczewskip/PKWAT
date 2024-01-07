@@ -26,7 +26,13 @@
 
         public async Task<LiveEstimationScoringTaskStatusDto> GenerateStatusDtoForScoringTask(int scoringTaskId)
         {
-            var scoringTask = await _dbContext.ScoringTasks.AsNoTracking().FirstOrDefaultAsync(x => x.Id == scoringTaskId);
+            var scoringTask = await _dbContext
+                .ScoringTasks
+                .Include(x => x.EstimationMethod)
+                .ThenInclude(x => x.PossibleValues)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == scoringTaskId);
+
             var owner = await _dbContext.Users.Where(x => x.Id == scoringTask.OwnerId).Select(x => x.UserName).FirstOrDefaultAsync();
 
             var statusDto = new LiveEstimationScoringTaskStatusDto
@@ -34,7 +40,18 @@
                 ScoringTaskName = scoringTask.Name.Name,
                 ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
                 ScoringTaskObservers = _liveEstimationObserversInMemoryStore.GetObservers(scoringTaskId).Select(x => x.UserName).ToArray(),
-                ScoringTaskOwner = owner
+                ScoringTaskOwner = owner,
+                ScoringTaskEstimationMethod = scoringTask.EstimationMethod.Name.Value,
+                ScoringTaskEstimationMethodPossibleValues = scoringTask
+                    .EstimationMethod
+                    .PossibleValues
+                    .Select(x => new LiveEstimationScoringTaskEstimationMethodPossibleValueDto() 
+                    {
+                        Id = x.Id,
+                        Name = x.EstimationMethodValue.Value
+                    }).ToArray(),
+                CanBeStarted = scoringTask.CanBeStarted(),
+                CanAppendUserEstimation = scoringTask.CanAppendUserEstimation()
             };
 
             return statusDto;

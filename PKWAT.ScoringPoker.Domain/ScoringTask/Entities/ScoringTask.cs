@@ -66,6 +66,16 @@
             Status = ScoringTaskStatusId.EstimationFinished;
         }
 
+        public bool CanBeStarted()
+        {
+            return Status is ScoringTaskStatusId.Created or ScoringTaskStatusId.EstimationFinished;
+        }
+
+        public bool CanAppendUserEstimation()
+        {
+            return Status == ScoringTaskStatusId.EstimationStarted;
+        }
+
         //public void AppendEstimation(DateTime moment, int userId, Estimation estimation)
         //{
         //    DomainException.ThrowIf(

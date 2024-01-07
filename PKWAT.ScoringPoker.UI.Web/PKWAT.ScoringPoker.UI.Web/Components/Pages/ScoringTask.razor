@@ -19,7 +19,22 @@
 
 <h2>Current status: @StatusDto?.ScoringTaskStatus</h2>
 
-<button type="button" class="btn btn-light" @onclick="@(e => HandleStart())">Start</button>
+@if(StatusDto?.CanBeStarted ?? false)
+{
+    <button type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start</button>
+}
+
+@if(StatusDto?.CanAppendUserEstimation ?? false)
+{
+    <h2>Possible values:</h2>
+
+    @foreach (var value in StatusDto?.ScoringTaskEstimationMethodPossibleValues ?? [])
+    {
+        <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-info")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
+    }
+}
+
+<br/>
 
 Observers:
 
@@ -42,6 +57,8 @@ Messages from the server:
 @code {
     [Parameter]
     public string TaskId { get; set; }
+
+    public int? ChosenEstimationOptionId { get; set; }
 
     public LiveEstimationScoringTaskStatusDto? StatusDto { get; set; }
 
@@ -78,6 +95,11 @@ Messages from the server:
     private async Task HandleStart()
     {
         await hubConnection!.SendAsync("StartEstimating");
+    }
+
+    private async Task HandleEstimate(int optionId)
+    {
+        ChosenEstimationOptionId = optionId;
     }
 
     public async ValueTask DisposeAsync()
