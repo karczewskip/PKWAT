@@ -9,6 +9,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService LocalStorageService
+@inject IConfiguration Configuration
 
 @implements IAsyncDisposable
 
@@ -94,7 +95,7 @@
         UserName = authenticatedState.User.Identity.Name ?? string.Empty;
 
         hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7173/liveEstimation",
+            .WithUrl($"{Configuration["ServerUri"]}/liveEstimation",
             o => o.AccessTokenProvider = () => LocalStorageService.GetItemAsync<string?>("authToken").AsTask())
             .Build();
 
