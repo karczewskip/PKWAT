@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Server",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Contracts", "PKWAT.ScoringPoker.Contracts\PKWAT.ScoringPoker.Contracts.csproj", "{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFA0A119-016B-4E9D-B6E3-9BBD2C7AEAF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A66A7FC1-4D8A-49A0-8AC9-0FAF965B7A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
