@@ -84,6 +84,7 @@
         {
             var createResponse = JsonSerializer.Deserialize<CreateScoringTaskResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             ScoringTasksList.Add(createResponse.ScoringTask);
+            CreateScoringTaskRequest.Name = string.Empty;
         }
     }
 

@@ -66,6 +66,7 @@
         {
             var createResponse = JsonSerializer.Deserialize<CreateEstimationMethodValueResponse>(await response.Content.ReadAsStringAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             EstimationMethodValues.Add(createResponse.Value);
+            CreateEstimationMethodValueRequest.Value = string.Empty;
         }
     }
 
