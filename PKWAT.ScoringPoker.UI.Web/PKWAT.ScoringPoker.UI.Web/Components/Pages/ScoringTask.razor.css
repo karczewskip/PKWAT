@@ -1,0 +1,12 @@
+﻿.list-group{
+    max-width: 500px
+}
+
+.separated {
+    margin-bottom: 1.1rem
+}
+
+#start-estimation-button{
+    display: block;
+    margin-top: 1rem;
+}

@@ -20,54 +20,62 @@
     return;
 }
 
-<h1>Test Scoring task @StatusDto.ScoringTaskName</h1>
+<div class="p-5 bg-body-tertiary rounded-3 separated">
 
-<h2>Current status: @StatusDto.ScoringTaskStatus</h2>
-        
-@if(StatusDto.CanBeStarted && IsOwner(UserName))
-{
-    <button type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start</button>
-}
+    <h1>Task: @StatusDto.ScoringTaskName</h1>
 
-@if (StatusDto.ScoringTaskStatusDueTo.HasValue)
-{
-    <p>Finish will be in @((StatusDto.ScoringTaskStatusDueTo.Value - DateTime.UtcNow).ToString(@"mm\:ss"))</p>
-}
+    <h2>Status: @StatusDto.ScoringTaskStatus</h2>
 
-@if (StatusDto.CanAppendUserEstimation || (StatusDto.CanBeApprovedByOwner && IsOwner(UserName)))
-{
-    <h2>Possible values:</h2>
-
-    @foreach (var value in StatusDto?.ScoringTaskEstimationMethodPossibleValues ?? [])
+    @if (StatusDto.ScoringTaskStatusDueTo.HasValue)
     {
-        <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-info")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
+        <p>Finish will be in @((StatusDto.ScoringTaskStatusDueTo.Value - DateTime.UtcNow).ToString(@"mm\:ss"))</p>
     }
-}
 
-@if(StatusDto.CanShowFinalEstimationValue)
-{
-    <h2>Final estimation value: @StatusDto?.ScoringTaskFinalValue</h2>
-}
-
-<br/>
-
-Observers:
-
-<ul>
-    @foreach (var observer in StatusDto?.UsersEstimations ?? [])
+    @if (StatusDto.CanAppendUserEstimation || (StatusDto.CanBeApprovedByOwner && IsOwner(UserName)))
     {
-        <li>@observer.UserName @(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</li>
+        <h2>Possible values:</h2>
+
+        <div class="btn-group" role="group">
+            @foreach (var value in StatusDto?.ScoringTaskEstimationMethodPossibleValues ?? [])
+            {
+                <button type="button" class="btn @(value.Id == ChosenEstimationOptionId ? "btn-primary" : "btn-secondary")" @onclick="@(e => HandleEstimate(value.Id))">@value.Name</button>
+            }
+        </div>
     }
-</ul>
 
-Messages from the server:
-
-<ul>
-    @foreach (var message in messages)
+    @if (StatusDto.CanShowFinalEstimationValue)
     {
-        <li>@message</li>
+        <h2>Final estimation: @StatusDto?.ScoringTaskFinalValue</h2>
     }
-</ul>
+
+    @if (StatusDto.CanBeStarted && IsOwner(UserName))
+    {
+        <button id="start-estimation-button" type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start estimation</button>
+    }
+
+</div>
+<div class="p-5 bg-body-tertiary rounded-3 separated">
+    <h2>Observers</h2>
+
+    <ul class="list-group">
+        @foreach (var observer in StatusDto?.UsersEstimations ?? [])
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                @observer.UserName
+                <span class="badge bg-primary rounded-pill">@(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</span>
+            </li>
+        }
+    </ul>
+
+    Messages from the server:
+
+    <ul>
+        @foreach (var message in messages)
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
 
 @code {
     [Parameter]
