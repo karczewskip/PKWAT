@@ -25,6 +25,7 @@
         {
             var estimationMethods = await _dbContext
                 .EstimationMethods
+                .Include(x => x.ScoringTasks)
                 .AsNoTracking()
                 .ToArrayAsync(cancellationToken);
 
@@ -33,7 +34,8 @@
                 EstimationMethods = estimationMethods.Select(x => new EstimationMethodDto
                 {
                     Id = x.Id,
-                    Name = x.Name.Value
+                    Name = x.Name.Value,
+                    CanBeDeleted = x.CanBeDeleted()
                 })
             });
         }
@@ -44,6 +46,7 @@
             var estimationMethodWithValues = await _dbContext
                 .EstimationMethods
                 .Include(x => x.PossibleValues)
+                .Include(x => x.ScoringTasks)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -57,7 +60,8 @@
                 EstimationMethod = new EstimationMethodDto 
                 { 
                     Id = estimationMethodWithValues.Id, 
-                    Name = estimationMethodWithValues.Name.Value 
+                    Name = estimationMethodWithValues.Name.Value,
+                    CanBeDeleted = estimationMethodWithValues.CanBeDeleted()
                 },
                 EstimationMethodValues = estimationMethodWithValues
                     .PossibleValues
@@ -85,7 +89,8 @@
                 EstimationMethod = new EstimationMethodDto
                 {
                     Id = entry.Entity.Id,
-                    Name = entry.Entity.Name.Value
+                    Name = entry.Entity.Name.Value,
+                    CanBeDeleted = entry.Entity.CanBeDeleted()
                 }
             });
         }

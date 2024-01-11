@@ -16,7 +16,10 @@
             <a class="alert-link" href="estimationMethods/@estimationMethod.Id">
                 @estimationMethod.Name
             </a>
-            <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteEstimationMethod(estimationMethod))">Delete</button>
+            @if (estimationMethod.CanBeDeleted)
+            {
+                <button type="button" class="btn btn-danger" @onclick="@(e => HandleDeleteEstimationMethod(estimationMethod))">Delete</button>
+            }
         </li>
     }
 </ul>

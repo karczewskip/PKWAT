@@ -2,6 +2,7 @@
 {
     using PKWAT.ScoringPoker.Domain.Abstraction;
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
+    using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
 
     public class EstimationMethod : Entity<int>, IAggregateRoot<int>
     {
@@ -11,6 +12,7 @@
 
         public EstimationMethodName Name { get; protected set; }
         public ICollection<EstimationMethodPossibleValue> PossibleValues { get; protected set; }
+        public ICollection<ScoringTask> ScoringTasks { get; protected set; } = new List<ScoringTask>();
 
         public static EstimationMethod CreateNew(EstimationMethodName name)
         {
@@ -31,6 +33,11 @@
             PossibleValues.Add(newPossibleValue);
 
             return newPossibleValue;
+        }
+
+        public bool CanBeDeleted()
+        {
+            return ScoringTasks.Count == 0;
         }
     }
 }

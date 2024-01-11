@@ -30,7 +30,7 @@
                     .HasMaxLength(ScoringTaskName.MaxLength);
 
                 b.HasOne(x => x.EstimationMethod)
-                    .WithMany()
+                    .WithMany(x => x.ScoringTasks)
                     .HasForeignKey(x => x.EstimationMethodId)
                     .OnDelete(DeleteBehavior.Restrict);
 
@@ -96,19 +96,6 @@
                     .HasConversion(x => x.Value, x => EstimationMethodValue.Create(x))
                     .HasMaxLength(EstimationMethodValue.MaxLength);
             });
-
-            //builder.Entity<ScoringTaskUser>()
-            //    .HasKey(x => new { x.ScoringTaskId, x.UserId });
-            //builder.Entity<ScoringTaskUserVote>()
-            //    .HasKey(x => new { x.ScoringTaskUserId, x.ScoringTaskId, x.UserId });
-            //builder.Entity<ScoringTaskUserVote>()
-            //    .HasOne(x => x.ScoringTaskUser)
-            //    .WithMany(x => x.Votes)
-            //    .HasForeignKey(x => new { x.ScoringTaskUserId, x.ScoringTaskId });
-            //builder.Entity<ScoringTaskUserVote>()
-            //    .HasOne(x => x.User)
-            //    .WithMany(x => x.Votes)
-            //    .HasForeignKey(x => x.UserId);
         }
     }
 }
