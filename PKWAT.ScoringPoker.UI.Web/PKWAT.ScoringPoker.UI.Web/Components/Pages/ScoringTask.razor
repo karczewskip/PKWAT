@@ -62,17 +62,8 @@
         {
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 @observer.UserName
-                <span class="badge bg-primary rounded-pill">@(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</span>
+                <span class="badge @(observer.EstimationAdded ? "text-bg-success" : "text-bg-primary") rounded-pill">@(StatusDto.CanShowUserEstimationValues ? observer.UserEstimation : observer.EstimationAdded ? "estimated" : "not estimated")</span>
             </li>
-        }
-    </ul>
-
-    Messages from the server:
-
-    <ul>
-        @foreach (var message in messages)
-        {
-            <li>@message</li>
         }
     </ul>
 </div>
@@ -88,7 +79,6 @@
     public LiveEstimationScoringTaskStatusDto? StatusDto { get; set; }
 
     private HubConnection? hubConnection;
-    private readonly List<string> messages = new();
 
     private static System.Timers.Timer? refreshTimer;
 
@@ -108,14 +98,7 @@
             o => o.AccessTokenProvider = () => LocalStorageService.GetItemAsync<string?>("authToken").AsTask())
             .Build();
 
-
-        hubConnection.On<string>("ReceiveNotification", message =>
-        {
-            messages.Add(message);
-            InvokeAsync(StateHasChanged);
-        });
-
-        hubConnection.On<LiveEstimationScoringTaskStatusDto>("ReceiveScoringTaskStatus", statusDto =>
+        hubConnection.On<LiveEstimationScoringTaskStatusDto>(nameof(ILiveEstimationClient.ReceiveScoringTaskStatus), statusDto =>
         {
             StatusDto = statusDto;
             if (!statusDto.CanAppendUserEstimation)
@@ -127,7 +110,7 @@
 
         await hubConnection.StartAsync();
 
-        await hubConnection.SendAsync("ObserveScoringTask", int.Parse(TaskId));
+        await hubConnection.SendAsync(nameof(ILiveEstimationHub.ObserveScoringTask), int.Parse(TaskId));
 
         refreshTimer = new System.Timers.Timer(1000);
         refreshTimer.Elapsed += async (sender, e) => await InvokeAsync(StateHasChanged);
@@ -136,19 +119,19 @@
 
     private async Task HandleStart()
     {
-        await hubConnection!.SendAsync("StartEstimating");
+        await hubConnection!.SendAsync(nameof(ILiveEstimationHub.StartEstimating));
     }
 
     private async Task HandleEstimate(int optionId)
     {
         if (StatusDto.CanBeApprovedByOwner)
         {
-            await hubConnection!.SendAsync("Estimate", optionId);
+            await hubConnection!.SendAsync(nameof(ILiveEstimationHub.Estimate), optionId);
         }
 
         if (StatusDto.CanAppendUserEstimation)
         {
-            await hubConnection!.SendAsync("AppendEstimation", optionId);
+            await hubConnection!.SendAsync(nameof(ILiveEstimationHub.AppendEstimation), optionId);
         }
 
         ChosenEstimationOptionId = optionId;

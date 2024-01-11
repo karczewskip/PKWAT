@@ -11,7 +11,7 @@
     using System.Security.Claims;
 
     [Authorize]
-    public class LiveEstimationHub : Hub<ILiveEstimationClient>
+    public class LiveEstimationHub : Hub<ILiveEstimationClient>, ILiveEstimationHub
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ILiveEstimationObserversInMemoryStore _liveEstimationObserversInMemoryStore;
@@ -30,23 +30,11 @@
             _liveEstimationScoringTaskStatusFactory = liveEstimationScoringTaskStatusFactory;
         }
 
-        public override async Task OnConnectedAsync()
-        {
-            await Clients.Client(Context.ConnectionId).ReceiveNotification(
-                $"Thank you connecting {Context.User?.Identity?.Name}");
-
-            await base.OnConnectedAsync();
-        }
-
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var observer = _liveEstimationObserversInMemoryStore.GetObserver(Context.ConnectionId);
             if (observer != null)
             {
-                await Clients
-                    .Group(observer.ScoringTaskId.ToString())
-                    .ReceiveNotification($"{observer.UserName} left task {observer.ScoringTaskId}");
-
                 _liveEstimationObserversInMemoryStore.RemoveObserver(Context.ConnectionId);
 
                 await SendInfoForAllObservers(observer.ScoringTaskId);
@@ -60,10 +48,6 @@
             await Groups.AddToGroupAsync(Context.ConnectionId, scoringTaskId.ToString());
 
             _liveEstimationObserversInMemoryStore.AddObserver(new LiveEstimationObserverInfo(int.Parse(Context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value), Context.User?.Identity?.Name, Context.ConnectionId, scoringTaskId));
-
-            await Clients
-                .Group(scoringTaskId.ToString())
-                .ReceiveNotification($"{Context.User?.Identity?.Name} joined to task {scoringTaskId}");
 
             await SendInfoForAllObservers(scoringTaskId);
         }
@@ -169,11 +153,5 @@
 
             await Clients.Group(scoringTaskId.ToString()).ReceiveScoringTaskStatus(statusDto);
         }
-    }
-
-    public interface ILiveEstimationClient
-    {
-        Task ReceiveNotification(string message);
-        Task ReceiveScoringTaskStatus(LiveEstimationScoringTaskStatusDto statusDto);
     }
 }

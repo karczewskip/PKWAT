@@ -18,17 +18,4 @@
         public required bool CanBeApprovedByOwner { get; set; }
         public required bool CanShowFinalEstimationValue { get; set; }
     }
-
-    public class LiveEstimationScoringTaskEstimationMethodPossibleValueDto 
-    {
-        public required int Id { get; set; }
-        public required string Name { get; set; }
-    }
-
-    public class LiveEstimationUserEstimationDto
-    {
-        public required string UserName { get; set; }
-        public required bool EstimationAdded { get; set; }
-        public required string? UserEstimation { get; set; }
-    }
 }

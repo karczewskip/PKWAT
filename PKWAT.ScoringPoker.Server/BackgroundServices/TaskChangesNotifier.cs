@@ -2,6 +2,7 @@
 {
     using Microsoft.AspNetCore.SignalR;
     using Microsoft.EntityFrameworkCore;
+    using PKWAT.ScoringPoker.Contracts.LiveEstimation;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
     using PKWAT.ScoringPoker.Server.Data;
     using PKWAT.ScoringPoker.Server.Factories;
@@ -32,8 +33,6 @@
                 && await timer.WaitForNextTickAsync(stoppingToken))
             {
                 var dateTime = DateTime.UtcNow;
-
-                //await _hubContext.Clients.All.ReceiveNotification($"The time is {dateTime}");
 
                 await CheckDeadlines(dateTime);
             }
