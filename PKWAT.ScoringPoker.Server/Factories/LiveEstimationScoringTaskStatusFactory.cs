@@ -47,6 +47,7 @@
             {
                 ScoringTaskName = scoringTask.Name.Name,
                 ScoringTaskStatus = scoringTask.Status.ToFriendlyString(),
+                ScoringTaskStatusDueTo = scoringTask.GetWhenStatusShouldBeChangedAutomatically(),
                 ScoringTaskOwner = owner,
                 ScoringTaskEstimationMethod = scoringTask.EstimationMethod.Name.Value,
                 ScoringTaskEstimationMethodPossibleValues = scoringTask

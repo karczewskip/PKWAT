@@ -88,7 +88,7 @@
                 return;
             }
 
-            var time = DateTime.Now;
+            var time = DateTime.UtcNow;
             scoringTask.StartEstimation(user.Id, time, time.AddSeconds(10));
 
             await _dbContext.SaveChangesAsync();
@@ -122,7 +122,7 @@
                 return;
             }
 
-            var time = DateTime.Now;
+            var time = DateTime.UtcNow;
             scoringTask.AppendEstimation(time, user.Id, scoringTask.EstimationMethodId, EstimationMethodValue.Create(value.EstimationMethodValue.Value));
 
             await _dbContext.SaveChangesAsync();

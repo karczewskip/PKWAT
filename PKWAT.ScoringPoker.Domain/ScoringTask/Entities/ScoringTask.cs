@@ -133,6 +133,15 @@
         {
             return Status is ScoringTaskStatusId.Approved;
         }
+
+        public DateTime? GetWhenStatusShouldBeChangedAutomatically()
+        {
+            if (Status is ScoringTaskStatusId.EstimationStarted)
+            {
+                return ScheduledEstimationFinish;
+            }
+            return null;
+        }
     }
 
     public enum ScoringTaskStatusId

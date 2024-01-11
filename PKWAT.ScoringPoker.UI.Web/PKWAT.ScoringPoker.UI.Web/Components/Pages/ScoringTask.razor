@@ -29,6 +29,11 @@
     <button type="button" class="btn btn-primary" @onclick="@(e => HandleStart())">Start</button>
 }
 
+@if (StatusDto.ScoringTaskStatusDueTo.HasValue)
+{
+    <p>Finish will be in @((StatusDto.ScoringTaskStatusDueTo.Value - DateTime.UtcNow).ToString(@"mm\:ss"))</p>
+}
+
 @if (StatusDto.CanAppendUserEstimation || (StatusDto.CanBeApprovedByOwner && IsOwner(UserName)))
 {
     <h2>Possible values:</h2>
@@ -77,6 +82,8 @@ Messages from the server:
     private HubConnection? hubConnection;
     private readonly List<string> messages = new();
 
+    private static System.Timers.Timer? refreshTimer;
+
     protected override async Task OnInitializedAsync()
     {
         var authenticatedState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -113,6 +120,10 @@ Messages from the server:
         await hubConnection.StartAsync();
 
         await hubConnection.SendAsync("ObserveScoringTask", int.Parse(TaskId));
+
+        refreshTimer = new System.Timers.Timer(1000);
+        refreshTimer.Elapsed += async (sender, e) => await InvokeAsync(StateHasChanged);
+        refreshTimer.Start();
     }
 
     private async Task HandleStart()
@@ -145,6 +156,11 @@ Messages from the server:
         if(hubConnection is not null)
         {
             await hubConnection.DisposeAsync();
+        }
+
+        if(refreshTimer is not null)
+        {
+            refreshTimer.Dispose();
         }
     }
 

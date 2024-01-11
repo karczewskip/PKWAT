@@ -11,7 +11,7 @@
 
     public class TaskChangesNotifier : BackgroundService
     {
-        private static readonly TimeSpan Period = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan Period = TimeSpan.FromSeconds(1);
 
         private readonly IHubContext<LiveEstimationHub, ILiveEstimationClient> _hubContext;
         private readonly IServiceProvider _serviceProvider;
@@ -31,9 +31,9 @@
             while(!stoppingToken.IsCancellationRequested
                 && await timer.WaitForNextTickAsync(stoppingToken))
             {
-                var dateTime = DateTime.Now;
+                var dateTime = DateTime.UtcNow;
 
-                await _hubContext.Clients.All.ReceiveNotification($"The time is {dateTime}");
+                //await _hubContext.Clients.All.ReceiveNotification($"The time is {dateTime}");
 
                 await CheckDeadlines(dateTime);
             }
