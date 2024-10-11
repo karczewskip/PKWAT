@@ -4,7 +4,7 @@
     using PKWAT.ScoringPoker.Contracts.LiveEstimation;
     using PKWAT.ScoringPoker.Server.Data;
     using PKWAT.ScoringPoker.Domain.ScoringTask.Entities;
-    using PKWAT.ScoringPoker.Server.Hubs;
+    using PKWAT.ScoringPoker.Server.Stores;
 
     public interface ILiveEstimationScoringTaskStatusFactory
     {

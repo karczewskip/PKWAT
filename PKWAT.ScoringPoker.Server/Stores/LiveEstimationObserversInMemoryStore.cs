@@ -1,4 +1,4 @@
-﻿namespace PKWAT.ScoringPoker.Server.Hubs
+﻿namespace PKWAT.ScoringPoker.Server.Stores
 {
     public class LiveEstimationObserversInMemoryStore : ILiveEstimationObserversInMemoryStore
     {
@@ -41,5 +41,5 @@
     }
 
     public record LiveEstimationObserverInfo(int UserId, string UserName, string ConnectionId, int ScoringTaskId);
-    
+
 }

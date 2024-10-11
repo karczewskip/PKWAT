@@ -7,6 +7,7 @@ using PKWAT.ScoringPoker.Server.Hubs;
 using PKWAT.ScoringPoker.Server.BackgroundServices;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PKWAT.ScoringPoker.Server.Factories;
+using PKWAT.ScoringPoker.Server.Stores;
 
 var builder = WebApplication.CreateBuilder(args);
 

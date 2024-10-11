@@ -8,6 +8,7 @@
     using PKWAT.ScoringPoker.Domain.EstimationMethod.ValueObjects;
     using PKWAT.ScoringPoker.Server.Data;
     using PKWAT.ScoringPoker.Server.Factories;
+    using PKWAT.ScoringPoker.Server.Stores;
     using System.Security.Claims;
 
     [Authorize]
