@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Contract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{B8C6F236-218C-446F-864B-B49A93138FFE}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

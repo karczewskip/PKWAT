@@ -22,9 +22,18 @@ services:
     depends_on:
       - db
 
-  server:
+  appserver:
     image: scoring-poker-server
     ports: 
      - "7173:8080"
+     - "7174:8081" 
     depends_on:
         - db
+
+  web:
+    image: scoring-poker-webapp
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+        - appserver
