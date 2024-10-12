@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using PKWAT.ScoringPoker.Server.Data;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using PKWAT.ScoringPoker.Server.Hubs;
 using PKWAT.ScoringPoker.Server.BackgroundServices;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using PKWAT.ScoringPoker.Server.Data;
 using PKWAT.ScoringPoker.Server.Factories;
+using PKWAT.ScoringPoker.Server.Hubs;
 using PKWAT.ScoringPoker.Server.Stores;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +24,7 @@ builder.Services.AddHostedService<TaskChangesNotifier>();
 builder.Services.AddCors();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
