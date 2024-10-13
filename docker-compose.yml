@@ -21,12 +21,16 @@ services:
       - db
 
   appserver:
-    image: scoring-poker-server
+    build:
+      context: .
+      dockerfile: PKWAT.ScoringPoker.Server\Dockerfile
     depends_on:
         - db
 
   web:
-    image: scoring-poker-webapp
+    build:
+      context: .
+      dockerfile: PKWAT.ScoringPoker.UI.Web\Dockerfile
     ports:
       - "8080:8080"
       - "8081:8081"

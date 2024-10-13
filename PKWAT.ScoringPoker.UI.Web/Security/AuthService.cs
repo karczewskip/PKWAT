@@ -28,6 +28,11 @@
             var result = await _httpClient.PostAsJsonAsync("api/accounts", registerModel);
             if (result.IsSuccessStatusCode)
                 return new RegisterResponse { Success = true, Errors = null };
+            var reqisterResult = JsonSerializer.Deserialize<RegisterResponse>(await result.Content.ReadAsStreamAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            
+            if(reqisterResult != null)
+                return reqisterResult;
+
             return new RegisterResponse { Success = false, Errors = new List<string> { "Error occured" } };
         }
 
