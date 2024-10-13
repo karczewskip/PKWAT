@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - C:/workspace/postgres-docker/data2:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@root.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+  appserver:
+    build:
+      context: ../../.
+      dockerfile: PKWAT.ScoringPoker.Server\Dockerfile
+    depends_on:
+        - db
+
+  web:
+    build:
+      context: ../../.
+      dockerfile: PKWAT.ScoringPoker.UI.Web\Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+        - appserver

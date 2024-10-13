@@ -11,9 +11,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.Contract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PKWAT.ScoringPoker.UI.Web", "PKWAT.ScoringPoker.UI.Web\PKWAT.ScoringPoker.UI.Web.csproj", "{4BA4B54C-24A3-4A68-AFC0-8278BE3AD167}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{B8C6F236-218C-446F-864B-B49A93138FFE}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReleaseScripts", "ReleaseScripts", "{B8C6F236-218C-446F-864B-B49A93138FFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Linux", "Linux", "{BE32A594-954E-4CE1-8DC2-F93B6E37C983}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
+		ReleaseScripts\Linux\docker-compose.yml = ReleaseScripts\Linux\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Windows", "Windows", "{4907D34F-DA09-4491-86AB-92E272228B61}"
+	ProjectSection(SolutionItems) = preProject
+		ReleaseScripts\Windows\docker-compose.yml = ReleaseScripts\Windows\docker-compose.yml
 	EndProjectSection
 EndProject
 Global
@@ -41,6 +48,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE32A594-954E-4CE1-8DC2-F93B6E37C983} = {B8C6F236-218C-446F-864B-B49A93138FFE}
+		{4907D34F-DA09-4491-86AB-92E272228B61} = {B8C6F236-218C-446F-864B-B49A93138FFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B0A394A-8D40-4869-AE65-7298E1705208}
